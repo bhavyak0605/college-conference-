@@ -1,10 +1,10 @@
 // Mobile Menu Toggle
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navMenu = document.getElementById('navMenu');
 
     if (mobileMenuToggle && navMenu) {
-        mobileMenuToggle.addEventListener('click', function() {
+        mobileMenuToggle.addEventListener('click', function () {
             navMenu.classList.toggle('active');
         });
     }
@@ -29,14 +29,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (prevBtn) {
-        prevBtn.addEventListener('click', function() {
+        prevBtn.addEventListener('click', function () {
             currentNotification = (currentNotification - 1 + notifications.length) % notifications.length;
             updateNotification();
         });
     }
 
     if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
+        nextBtn.addEventListener('click', function () {
             currentNotification = (currentNotification + 1) % notifications.length;
             updateNotification();
         });
@@ -94,14 +94,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const scrollAmount = 300; // pixels to scroll per click
 
         // Arrow button scrolling
-        scrollLeftBtn.addEventListener('click', function() {
+        scrollLeftBtn.addEventListener('click', function () {
             flagsContainer.scrollBy({
                 left: -scrollAmount,
                 behavior: 'smooth'
             });
         });
 
-        scrollRightBtn.addEventListener('click', function() {
+        scrollRightBtn.addEventListener('click', function () {
             flagsContainer.scrollBy({
                 left: scrollAmount,
                 behavior: 'smooth'
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Mouse wheel horizontal scrolling
-        flagsContainer.addEventListener('wheel', function(e) {
+        flagsContainer.addEventListener('wheel', function (e) {
             if (e.deltaY !== 0) {
                 e.preventDefault();
                 flagsContainer.scrollLeft += e.deltaY;
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update arrow button visibility based on scroll position
         function updateArrowButtons() {
             const { scrollLeft, scrollWidth, clientWidth } = flagsContainer;
-            
+
             // Show/hide left arrow
             if (scrollLeft <= 0) {
                 scrollLeftBtn.style.opacity = '0.5';
@@ -152,27 +152,49 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hero Background Image Slider
     const heroSlides = document.querySelectorAll('.hero-slide');
     let currentSlide = 0;
-    const slideInterval = 2000; // 2 seconds
+    const slideInterval = 3000; // 3 seconds loop for smooth viewing
 
     function nextSlide() {
         if (heroSlides.length === 0) return;
 
-        // Remove active class from current slide
+        // Remove exit class from all slides so they snap to the right
+        heroSlides.forEach(slide => slide.classList.remove('exit'));
+
+        // Current active becomes exit
         heroSlides[currentSlide].classList.remove('active');
-        heroSlides[currentSlide].classList.add('prev');
+        heroSlides[currentSlide].classList.add('exit');
 
         // Move to next slide
         currentSlide = (currentSlide + 1) % heroSlides.length;
 
         // Add active class to new slide
-        setTimeout(() => {
-            heroSlides.forEach(slide => slide.classList.remove('prev'));
-            heroSlides[currentSlide].classList.add('active');
-        }, 50);
+        heroSlides[currentSlide].classList.add('active');
     }
 
     // Start the slider if slides exist
     if (heroSlides.length > 0) {
         setInterval(nextSlide, slideInterval);
+    }
+
+    // Vertical Tracks Tabs in CFP
+    const trackTabs = document.querySelectorAll('.track-v-tab');
+    const trackPanels = document.querySelectorAll('.track-v-panel');
+
+    if (trackTabs.length > 0 && trackPanels.length > 0) {
+        trackTabs.forEach(tab => {
+            // Click to switch tabs
+            tab.addEventListener('click', function () {
+                trackTabs.forEach(t => t.classList.remove('active'));
+                trackPanels.forEach(p => p.classList.remove('active'));
+
+                this.classList.add('active');
+
+                const targetId = this.getAttribute('data-target');
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) {
+                    targetPanel.classList.add('active');
+                }
+            });
+        });
     }
 });

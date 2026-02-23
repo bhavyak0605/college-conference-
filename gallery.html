@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -14,7 +16,7 @@
             <div class="nav-wrapper">
                 <div class="logo-container">
                     <img src="img/clg logo.png" alt="Bharti Vidyapeeth Logo" class="logo">
-                   
+
                 </div>
                 <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu">
                     <i class="fas fa-bars"></i>
@@ -38,19 +40,46 @@
     </nav>
 
     <!-- Page Header -->
-    <header class="sessions-header">
-        <h1>GALLERY</h1>
+    <header class="gallery-header">
+        <div class="container gallery-container">
+            <h1 class="gallery-main-title">GALLERY</h1>
+        </div>
     </header>
 
     <!-- Main Content -->
-    <main class="sessions-main">
-        <div class="container">
-            <section class="about-sessions">
-                <h2 class="section-title">Conference Highlights</h2>
-                <div class="about-content">
-                    <p>Place images and descriptions of previous conferences and events here.</p>
+    <main class="gallery-main">
+        <div class="container gallery-container">
+
+            <div class="gallery-section-header">
+                <h2 class="gallery-subtitle">Gallery ( 2025 )</h2>
+                <a href="#" class="view-all-btn">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="gallery-grid-wrapper">
+                <!-- Left Arrow -->
+                <button class="gallery-nav prev-gallery" aria-label="Previous images"><i
+                        class="fas fa-chevron-left"></i></button>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/400/600?random=1" alt="Gallery Image 1" class="gallery-img">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/400/600?random=2" alt="Gallery Image 2" class="gallery-img">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/400/600?random=3" alt="Gallery Image 3" class="gallery-img">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://picsum.photos/400/600?random=4" alt="Gallery Image 4" class="gallery-img">
+                    </div>
                 </div>
-            </section>
+
+                <!-- Right Arrow -->
+                <button class="gallery-nav next-gallery" aria-label="Next images"><i
+                        class="fas fa-chevron-right"></i></button>
+            </div>
+
         </div>
     </main>
 
@@ -78,5 +107,5 @@
 
     <script src="script.js"></script>
 </body>
-</html>
 
+</html>
