@@ -1,2 +1,1 @@
-# college-conference-
-conference 
+# conference
