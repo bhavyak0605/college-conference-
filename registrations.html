@@ -67,7 +67,9 @@
                     <div class="action-buttons">
                         <button class="pay-btn btn-razorpay">Pay with <img src="img/razorpay-logo.png" alt="Razorpay"
                                 onerror="this.src=''; this.alt='Razorpay'; this.style.fontWeight='bold'; this.style.fontStyle='italic'"></button>
-                        <button class="form-btn">Fill Registration Form</button>
+                        <button class="form-btn"
+                            onclick="document.getElementById('registrationFormSection').scrollIntoView({behavior: 'smooth'})">Fill
+                            Registration Form</button>
                     </div>
                 </div>
 
@@ -124,7 +126,9 @@
                         <div class="action-buttons">
                             <button class="pay-btn btn-paypal">Pay with <img src="img/paypal-logo.png" alt="PayPal"
                                     onerror="this.src=''; this.alt='PayPal'; this.style.fontWeight='bold'; this.style.fontStyle='italic'"></button>
-                            <button class="form-btn">Fill Registration Form</button>
+                            <button class="form-btn"
+                                onclick="document.getElementById('registrationFormSection').scrollIntoView({behavior: 'smooth'})">Fill
+                                Registration Form</button>
                         </div>
                     </div>
 
@@ -197,6 +201,67 @@
         <div class="container registration-content padding-bottom">
             <p class="guidelines-note"><strong>Note:</strong> All participants and authors abide by, as per the
                 following guidelines.</p>
+
+            <!-- Registration Form Section -->
+            <section id="registrationFormSection" class="registration-form-section"
+                style="margin-top: 40px; margin-bottom: 50px;">
+                <h2 style="font-size: 24px; color: var(--nav-dark); margin-bottom: 20px;">Conference Registration Form
+                </h2>
+                <form id="registrationForm" class="custom-form">
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="regName">Full Name *</label>
+                            <input type="text" id="regName" name="fullName" required>
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="regEmail">Email Address *</label>
+                            <input type="email" id="regEmail" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="regPhone">Phone Number *</label>
+                            <input type="tel" id="regPhone" name="phone" required>
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="regCountry">Country *</label>
+                            <input type="text" id="regCountry" name="country" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="regCategory">Category *</label>
+                            <select id="regCategory" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="Student/Research Scholar">Student/Research Scholar</option>
+                                <option value="Faculty/Industry Delegate">Faculty/Industry Delegate</option>
+                                <option value="Attendee">Attendee</option>
+                            </select>
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="regType">Registration Type *</label>
+                            <select id="regType" name="type" required>
+                                <option value="">Select Type</option>
+                                <option value="Online">Online</option>
+                                <option value="Offline">Offline</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="regAmount">Amount Paid *</label>
+                            <input type="text" id="regAmount" name="amount" placeholder="e.g. INR 15000 or USD 200"
+                                required>
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="regTxnId">Transaction / Payment ID *</label>
+                            <input type="text" id="regTxnId" name="paymentId" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">Submit Registration Details</button>
+                    <div id="regFormResult" class="form-result"></div>
+                </form>
+            </section>
 
             <div class="policy-tabs">
                 <button class="policy-tab active" data-target="refund">Refund & Cancellation</button>

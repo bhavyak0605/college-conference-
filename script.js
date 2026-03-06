@@ -221,4 +221,100 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+
+    // Contact Form Submission
+    const contactForm = document.getElementById('contactForm');
+    const contactFormResult = document.getElementById('contactFormResult');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = contactForm.querySelector('.btn-submit');
+            const originalText = btn.textContent;
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+            contactFormResult.className = 'form-result';
+            contactFormResult.textContent = '';
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    contactFormResult.textContent = result.message;
+                    contactFormResult.classList.add('success');
+                    contactForm.reset();
+                } else {
+                    throw new Error(result.message || 'Error sending message');
+                }
+            } catch (error) {
+                contactFormResult.textContent = error.message;
+                contactFormResult.classList.add('error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+    }
+
+    // Registration Form Submission
+    const registrationForm = document.getElementById('registrationForm');
+    const regFormResult = document.getElementById('regFormResult');
+
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = registrationForm.querySelector('.btn-submit');
+            const originalText = btn.textContent;
+            btn.textContent = 'Processing...';
+            btn.disabled = true;
+            regFormResult.className = 'form-result';
+            regFormResult.textContent = '';
+
+            const formData = {
+                fullName: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value,
+                phone: document.getElementById('regPhone').value,
+                country: document.getElementById('regCountry').value,
+                category: document.getElementById('regCategory').value,
+                type: document.getElementById('regType').value,
+                amount: document.getElementById('regAmount').value,
+                paymentId: document.getElementById('regTxnId').value
+            };
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    regFormResult.textContent = result.message;
+                    regFormResult.classList.add('success');
+                    registrationForm.reset();
+                } else {
+                    throw new Error(result.message || 'Registration failed');
+                }
+            } catch (error) {
+                regFormResult.textContent = error.message;
+                regFormResult.classList.add('error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+    }
 });

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,35 +8,36 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-   <!-- Navigation -->
-   <nav class="navbar">
-    <div class="container">
-        <div class="nav-wrapper">
-            <div class="logo-container">
-                <img src="img/clg logo.png" alt="Bharti Vidyapeeth Logo" class="logo">
-               
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo-container">
+                    <img src="img/clg logo.png" alt="Bharti Vidyapeeth Logo" class="logo">
+
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="cfp.html">CFP</a></li>
+                    <li><a href="sessions.html">Special Sessions</a></li>
+                    <li><a href="schedule.html">Program Schedule</a></li>
+                    <li><a href="publication.html">Publication</a></li>
+                    <li><a href="committee.html">Committees</a></li>
+                    <li><a href="speaker.html">Speakers</a></li>
+                    <li><a href="awards.html">Awards</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="venue.html">Venue</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="registrations.html" class="btn-register" target="_blank">Registration</a></li>
+                </ul>
             </div>
-            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu">
-                <i class="fas fa-bars"></i>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="cfp.html">CFP</a></li>
-                <li><a href="sessions.html">Special Sessions</a></li>
-                <li><a href="schedule.html">Program Schedule</a></li>
-                <li><a href="publication.html">Publication</a></li>
-                <li><a href="committee.html">Committees</a></li>
-                <li><a href="speaker.html">Speakers</a></li>
-                <li><a href="awards.html">Awards</a></li>
-                <li><a href="gallery.html">Gallery</a></li>
-                <li><a href="venue.html">Venue</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="registrations.html" class="btn-register" target="_blank">Registration</a></li>
-            </ul>
         </div>
-    </div>
-</nav>
+    </nav>
     <!-- Page Header -->
     <header class="sessions-header">
         <h1>CONTACT</h1>
@@ -46,8 +48,37 @@
         <div class="container">
             <section class="about-sessions">
                 <h2 class="section-title">Get in Touch</h2>
-                <div class="about-content">
-                    <p>Include email addresses, phone numbers, and a contact form or other relevant contact details here.</p>
+                <div class="about-content contact-layout">
+                    <div class="contact-info">
+                        <h3>Contact Information</h3>
+                        <p><i class="fas fa-envelope"></i> <strong>Email:</strong> info@conference2026.com</p>
+                        <p><i class="fas fa-phone"></i> <strong>Phone:</strong> +91 123 456 7890</p>
+                        <p><i class="fas fa-map-marker-alt"></i> <strong>Address:</strong> Bharti Vidyapeeth College of
+                            Engineering, Pune, India</p>
+                    </div>
+                    <div class="contact-form-container">
+                        <h3>Send us a Message</h3>
+                        <form id="contactForm" class="custom-form">
+                            <div class="form-group">
+                                <label for="name">Full Name *</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Subject *</label>
+                                <input type="text" id="subject" name="subject" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message *</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-submit">Send Message</button>
+                            <div id="contactFormResult" class="form-result"></div>
+                        </form>
+                    </div>
                 </div>
             </section>
         </div>
@@ -77,5 +108,5 @@
 
     <script src="script.js"></script>
 </body>
-</html>
 
+</html>
