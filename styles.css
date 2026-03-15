@@ -600,6 +600,7 @@ s
     text-decoration: none;
     font-weight: 600;
     font-size: 16px;
+    margin: -350px;
 }
 
 .view-all-link:hover {
