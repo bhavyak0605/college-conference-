@@ -1,12 +1,19 @@
-/* 
-================================================================
-VISTA 2027 Admin Console Core JavaScript
-Aesthetic: Dark Space Navy & Deep Purple Space Gradients, Gold Accents,
-           and Premium Glassmorphic Cards.
-================================================================
-*/
+import { auth } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-// --- Mock Session Protection (Runs immediately to prevent layout pop-in) ---
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        window.location.href = "admin-login.html";
+    }
+});
+
+import { signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "admin-login.html";
+});
+
 (function() {
     const path = window.location.pathname;
     const isLoginPage = path.endsWith("login.html") || document.getElementById("loginForm") !== null;
@@ -19,9 +26,7 @@ Aesthetic: Dark Space Navy & Deep Purple Space Gradients, Gold Accents,
     }
 })();
 
-// ==========================================
 // 1. DATA STORE (Stateful mock database)
-// ==========================================
 
 let speakers = [
     {
@@ -159,9 +164,7 @@ let activityLogs = [
     }
 ];
 
-// ==========================================
 // 2. DOM INITIALIZATION
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
@@ -205,25 +208,29 @@ function initLoginPage(loginForm) {
             errorBox.classList.remove("show");
         }
 
-        setTimeout(() => {
-            // Mock authentication credentials check
-            const isValidUser = (email === "admin@bvuvista.com" || email === "admin@vista2027.edu.in" || email === "admin@bvvistacon.in" || email === "admin");
-            const isValidPass = (password === "P@ssword06" || password === "admin123");
+       import { auth } from "./firebase-config.js";
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-            if (isValidUser && isValidPass) {
-                sessionStorage.setItem("adminLoggedIn", "true");
-                window.location.href = "admin-dashboard.html";
-            } else {
-                if (loginBtn) {
-                    loginBtn.classList.remove("loading");
-                    loginBtn.disabled = false;
-                }
-                if (errorBox && errorText) {
-                    errorText.innerText = "Invalid credentials. Please use admin@bvuvista.com / P@ssword06.";
-                    errorBox.classList.add("show");
-                }
-            }
-        }, 1200); // Simulated secure authentication delay
+        setTimeout(async () => {
+        try {
+        await signInWithEmailAndPassword(auth, email, password);
+
+        window.location.href = "admin-dashboard.html";
+
+    } catch (error) {
+        if (loginBtn) {
+            loginBtn.classList.remove("loading");
+            loginBtn.disabled = false;
+        }
+
+        if (errorBox && errorText) {
+            errorText.innerText = "Invalid email or password";
+            errorBox.classList.add("show");
+        }
+
+        console.log(error.message);
+    }
+}, 1200); // Simulated secure authentication delay
     });
 }
 
@@ -339,9 +346,7 @@ function initDashboardPage() {
     }
 }
 
-// ==========================================
 // 3. SPA TAB ROUTING (Global Scope)
-// ==========================================
 
 window.switchTab = function(tabName) {
     // Remove active class from all nav items
@@ -368,9 +373,7 @@ window.switchTab = function(tabName) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// ==========================================
 // 4. STATS METRICS SYNC
-// ==========================================
 
 function updateStats() {
     const sEl = document.getElementById("stat-speakers");
@@ -388,9 +391,7 @@ function updateStats() {
     }
 }
 
-// ==========================================
 // 5. RENDERING PIPELINES
-// ==========================================
 
 // --- Keynote Speakers Render ---
 function renderSpeakers() {
@@ -638,9 +639,7 @@ function renderActivityLogs() {
     });
 }
 
-// ==========================================
 // 6. ACTION & CRUD OPERATIONS (Global Scope)
-// ==========================================
 
 // --- Activity Logger Helper ---
 function logActivity(description, category, status = "success") {

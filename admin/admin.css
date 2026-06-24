@@ -1,13 +1,4 @@
-/* 
-================================================================
-VISTA 2027 Admin Console Core Stylesheet
-Aligned to the main VISTA 2027 Academic Conference Website Theme.
-Aesthetic: Professional Light Theme, Brand Orange (#E55A2B) Headers,
-           Deep Brand Navy (#1a1a3e) Accents, and Clean White Cards.
-================================================================
-*/
 
-/* --- Design Variables & Tokens --- */
 :root {
     /* Main brand colors from public site */
     --primary-orange: #E55A2B;
