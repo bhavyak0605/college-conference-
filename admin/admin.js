@@ -1,5 +1,6 @@
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 onAuthStateChanged(auth, (user) => {
     if (!user) {
@@ -207,9 +208,6 @@ function initLoginPage(loginForm) {
         if (errorBox) {
             errorBox.classList.remove("show");
         }
-
-       import { auth } from "./firebase-config.js";
-        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
         setTimeout(async () => {
         try {
