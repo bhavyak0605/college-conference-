@@ -1,45 +1,28 @@
-import { auth } from "./firebase.js";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+/* 
+================================================================
+VISTA 2027 Admin Console Core JavaScript
+Aesthetic: Dark Space Navy & Deep Purple Space Gradients, Gold Accents,
+           and Premium Glassmorphic Cards.
+================================================================
+*/
 
-// Protect dashboard
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-  }
-});
+// --- Mock Session Protection (Runs immediately to prevent layout pop-in) ---
+(function() {
+    const path = window.location.pathname;
+    const isLoginPage = path.endsWith("login.html") || document.getElementById("loginForm") !== null;
+    const isLoggedIn = sessionStorage.getItem("adminLoggedIn") === "true";
 
-// Login
-const loginForm = document.getElementById("loginForm");
-
-if (loginForm) {
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = "admin-dashboard.html";
-    } catch (error) {
-      alert(error.message);
+    if (!isLoginPage && !isLoggedIn) {
+        window.location.href = "login.html";
+    } else if (isLoginPage && isLoggedIn) {
+        window.location.href = "admin-dashboard.html";
     }
-  });
-}
+})();
 
-// Logout
-const logoutBtn = document.getElementById("logoutBtn");
+// ==========================================
+// 1. DATA STORE (Stateful mock database)
+// ==========================================
 
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "login.html";
-  });
-}
 let speakers = [
     {
         name: "Dr. Ramesh K. Somashekar",
@@ -177,7 +160,7 @@ let activityLogs = [
 ];
 
 // ==========================================
-// 2. HELPER FUNCTIONS & DOM INITIALIZATION
+// 2. DOM INITIALIZATION
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -189,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+// --- Login Page Initialization ---
 function initLoginPage(loginForm) {
     const togglePasswordBtn = document.getElementById("togglePassword");
     const passwordInput = document.getElementById("password");
@@ -222,8 +206,12 @@ function initLoginPage(loginForm) {
         }
 
         setTimeout(() => {
-            // Mock authentication check supporting both vista & placeholder emails with admin123
-            if ((email === "admin@vista2027.edu.in" || email === "admin@bvvistacon.in") && password === "admin123") {
+            // Mock authentication credentials check
+            const isValidUser = (email === "admin@bvuvista.com" || email === "admin@vista2027.edu.in" || email === "admin@bvvistacon.in" || email === "admin");
+            const isValidPass = (password === "P@ssword06" || password === "admin123");
+
+            if (isValidUser && isValidPass) {
+                sessionStorage.setItem("adminLoggedIn", "true");
                 window.location.href = "admin-dashboard.html";
             } else {
                 if (loginBtn) {
@@ -231,7 +219,7 @@ function initLoginPage(loginForm) {
                     loginBtn.disabled = false;
                 }
                 if (errorBox && errorText) {
-                    errorText.innerText = "Invalid email or password. Please try again.";
+                    errorText.innerText = "Invalid credentials. Please use admin@bvuvista.com / P@ssword06.";
                     errorBox.classList.add("show");
                 }
             }
@@ -239,8 +227,9 @@ function initLoginPage(loginForm) {
     });
 }
 
+// --- Dashboard Page Initialization ---
 function initDashboardPage() {
-    // Initial UI Render
+    // Initial Render of All Visual Pipelines
     updateStats();
     renderSpeakers();
     renderCommittee();
@@ -249,21 +238,22 @@ function initDashboardPage() {
     renderAnnouncements();
     renderActivityLogs();
 
-    // Attach SPA Navigation Events
+    // Attach SPA Navigation Sidebar Tab Switchers
     const navItems = document.querySelectorAll(".nav-item");
     navItems.forEach(item => {
         item.addEventListener("click", () => {
             const tabName = item.getAttribute("data-tab");
             switchTab(tabName);
 
-            // On Mobile view, close the sidebar drawer after selecting a tab
-            if (window.innerWidth <= 768) {
-                document.getElementById("adminSidebar").classList.remove("open");
+            // On Mobile drawers, close overlay on selection
+            const sidebar = document.getElementById("adminSidebar");
+            if (window.innerWidth <= 768 && sidebar) {
+                sidebar.classList.remove("open");
             }
         });
     });
 
-    // Mobile Sidebar Drawer Toggle
+    // Mobile Sidebar Drawer Toggle Button
     const menuToggleBtn = document.getElementById("menuToggleBtn");
     const adminSidebar = document.getElementById("adminSidebar");
     if (menuToggleBtn && adminSidebar) {
@@ -273,28 +263,29 @@ function initDashboardPage() {
         });
     }
 
-    // Close mobile sidebar if clicked outside of it
+    // Close mobile drawer if clicked outside of its container bounds
     document.addEventListener("click", (e) => {
-        const adminSidebar = document.getElementById("adminSidebar");
-        const menuToggleBtn = document.getElementById("menuToggleBtn");
-        if (window.innerWidth <= 768 && adminSidebar && adminSidebar.classList.contains("open")) {
-            if (!adminSidebar.contains(e.target) && e.target !== menuToggleBtn) {
-                adminSidebar.classList.remove("open");
+        const sidebar = document.getElementById("adminSidebar");
+        const toggleBtn = document.getElementById("menuToggleBtn");
+        if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains("open")) {
+            if (!sidebar.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
+                sidebar.classList.remove("open");
             }
         }
     });
 
-    // Logout Action Trigger
+    // Logout Button Trigger
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
             logActivity("Logout trigger initialized.", "System", "warning");
-            alert("You have successfully logged out of the session (Mock Portal). Click OK to refresh the view.");
-            window.location.reload();
+            sessionStorage.removeItem("adminLoggedIn");
+            alert("You have successfully logged out of the VISTA 2027 Mock Portal.");
+            window.location.href = "login.html";
         });
     }
 
-    // Modal Add Button Listeners
+    // Add Trigger Modal Listeners
     const addSpeakerBtn = document.getElementById("addSpeakerBtn");
     if (addSpeakerBtn) {
         addSpeakerBtn.addEventListener("click", () => {
@@ -316,7 +307,7 @@ function initDashboardPage() {
         });
     }
 
-    // Form Submissions
+    // Form Submit Direct Event Hooks
     const speakerForm = document.getElementById("speakerForm");
     if (speakerForm) {
         speakerForm.addEventListener("submit", handleSpeakerSubmit);
@@ -337,7 +328,7 @@ function initDashboardPage() {
         announcementForm.addEventListener("submit", handleAnnouncementSubmit);
     }
 
-    // Clear Logs Button
+    // Clear Logs Handler
     const clearLogsBtn = document.getElementById("clearLogsBtn");
     if (clearLogsBtn) {
         clearLogsBtn.addEventListener("click", () => {
@@ -349,11 +340,11 @@ function initDashboardPage() {
 }
 
 // ==========================================
-// 3. SPA TAB NAVIGATION
+// 3. SPA TAB ROUTING (Global Scope)
 // ==========================================
 
-function switchTab(tabName) {
-    // Remove active class from all nav list items
+window.switchTab = function(tabName) {
+    // Remove active class from all nav items
     const navItems = document.querySelectorAll(".nav-item");
     navItems.forEach(item => {
         if (item.getAttribute("data-tab") === tabName) {
@@ -363,7 +354,7 @@ function switchTab(tabName) {
         }
     });
 
-    // Hide all panels and show active panel
+    // Toggle target panel layout visibilities
     const panels = document.querySelectorAll(".tab-panel");
     panels.forEach(panel => {
         if (panel.id === `${tabName}-panel`) {
@@ -373,31 +364,38 @@ function switchTab(tabName) {
         }
     });
 
-    // Scroll main container to top
+    // Scroll main viewport window to top smoothly
     window.scrollTo({ top: 0, behavior: "smooth" });
-}
+};
 
 // ==========================================
-// 4. STATS METRICS UPDATE
+// 4. STATS METRICS SYNC
 // ==========================================
 
 function updateStats() {
-    document.getElementById("stat-speakers").innerText = speakers.length;
-    document.getElementById("stat-registrations").innerText = registrations.length;
-    document.getElementById("stat-events").innerText = scheduleEvents.length;
+    const sEl = document.getElementById("stat-speakers");
+    const rEl = document.getElementById("stat-registrations");
+    const eEl = document.getElementById("stat-events");
+    const pEl = document.getElementById("stat-pending");
 
-    // Calculate pending registrations
-    const pendingCount = registrations.filter(r => r.status === "Pending").length;
-    document.getElementById("stat-pending").innerText = pendingCount;
+    if (sEl) sEl.innerText = speakers.length;
+    if (rEl) rEl.innerText = registrations.length;
+    if (eEl) eEl.innerText = scheduleEvents.length;
+
+    if (pEl) {
+        const pendingCount = registrations.filter(r => r.status === "Pending").length;
+        pEl.innerText = pendingCount;
+    }
 }
 
 // ==========================================
-// 5. RENDERING PIPELINES (DASHBOARD VIEWS)
+// 5. RENDERING PIPELINES
 // ==========================================
 
-// --- Speakers Rendering ---
+// --- Keynote Speakers Render ---
 function renderSpeakers() {
     const grid = document.getElementById("speakersAdminGrid");
+    if (!grid) return;
     grid.innerHTML = "";
 
     if (speakers.length === 0) {
@@ -436,9 +434,10 @@ function renderSpeakers() {
     });
 }
 
-// --- Committee Rendering ---
+// --- Committee Members Table Render ---
 function renderCommittee() {
     const tbody = document.getElementById("committeeTableBody");
+    if (!tbody) return;
     tbody.innerHTML = "";
 
     if (committee.length === 0) {
@@ -447,7 +446,6 @@ function renderCommittee() {
     }
 
     committee.forEach((member, idx) => {
-        // Build distinct badges for committee category
         let badgeClass = "info";
         if (member.category === "Chief Patron") badgeClass = "success";
         else if (member.category === "Organizing Committee") badgeClass = "warning";
@@ -474,9 +472,10 @@ function renderCommittee() {
     });
 }
 
-// --- Schedule Timeline Rendering ---
+// --- Schedule/Timeline Render ---
 function renderSchedule() {
     const list = document.getElementById("timelineAdminList");
+    if (!list) return;
     list.innerHTML = "";
 
     if (scheduleEvents.length === 0) {
@@ -505,9 +504,10 @@ function renderSchedule() {
     });
 }
 
-// --- Registrations Table Rendering ---
+// --- Registrations Data Render ---
 function renderRegistrations() {
     const tbody = document.getElementById("registrationsTableBody");
+    if (!tbody) return;
     tbody.innerHTML = "";
 
     if (registrations.length === 0) {
@@ -520,7 +520,6 @@ function renderRegistrations() {
         if (reg.status === "Approved") badgeClass = "success";
         else if (reg.status === "Rejected") badgeClass = "danger";
 
-        // Show action items only if pending
         let actionsHtml = `<span style="color:var(--text-muted); font-size:0.8rem">No Actions</span>`;
         if (reg.status === "Pending") {
             actionsHtml = `
@@ -550,17 +549,17 @@ function renderRegistrations() {
     });
 }
 
-// --- Announcements Feed Rendering ---
+// --- Announcements Notice Render ---
 function renderAnnouncements() {
     const feed = document.getElementById("announcementFeedList");
     const miniList = document.getElementById("announcements-mini-list");
 
-    feed.innerHTML = "";
-    miniList.innerHTML = "";
+    if (feed) feed.innerHTML = "";
+    if (miniList) miniList.innerHTML = "";
 
     if (announcements.length === 0) {
-        feed.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted)">No announcements published.</div>`;
-        miniList.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted); font-size:0.8rem">No alerts.</div>`;
+        if (feed) feed.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted)">No announcements published.</div>`;
+        if (miniList) miniList.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted); font-size:0.8rem">No alerts.</div>`;
         return;
     }
 
@@ -568,23 +567,23 @@ function renderAnnouncements() {
         const publishDate = new Date(ann.time);
         const timeStr = publishDate.toLocaleString();
 
-        // 1. Build main announcements panel feed item
-        const item = document.createElement("div");
-        item.className = "announcement-item";
-        item.innerHTML = `
-            <div class="announcement-meta">
-                <span class="announcement-author"><i class="fas fa-user-tie"></i> ${ann.author}</span>
-                <span class="announcement-date"><i class="fas fa-clock"></i> ${timeStr}</span>
-            </div>
-            <p class="announcement-msg">${ann.text}</p>
-            <button class="announcement-delete-btn" onclick="deleteAnnouncement(${idx})" title="Remove Alert">
-                <i class="fas fa-trash-can"></i>
-            </button>
-        `;
-        feed.appendChild(item);
+        if (feed) {
+            const item = document.createElement("div");
+            item.className = "announcement-item";
+            item.innerHTML = `
+                <div class="announcement-meta">
+                    <span class="announcement-author"><i class="fas fa-user-tie"></i> ${ann.author}</span>
+                    <span class="announcement-date"><i class="fas fa-clock"></i> ${timeStr}</span>
+                </div>
+                <p class="announcement-msg">${ann.text}</p>
+                <button class="announcement-delete-btn" onclick="deleteAnnouncement(${idx})" title="Remove Alert">
+                    <i class="fas fa-trash-can"></i>
+                </button>
+            `;
+            feed.appendChild(item);
+        }
 
-        // 2. Build mini-list widget items (Overview page limit 3)
-        if (idx < 3) {
+        if (miniList && idx < 3) {
             const miniItem = document.createElement("div");
             miniItem.className = "mini-announcement-item";
             miniItem.innerHTML = `
@@ -596,35 +595,35 @@ function renderAnnouncements() {
     });
 }
 
-// --- Activity Audit Logs Rendering ---
+// --- Activity Logs System Render ---
 function renderActivityLogs() {
     const tbody = document.getElementById("logsTableBody");
     const miniList = document.getElementById("logs-mini-list");
 
-    tbody.innerHTML = "";
-    miniList.innerHTML = "";
+    if (tbody) tbody.innerHTML = "";
+    if (miniList) miniList.innerHTML = "";
 
     if (activityLogs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary)">No audit logs recorded in this session.</td></tr>`;
-        miniList.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted); font-size:0.8rem">No recent logs.</div>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary)">No audit logs recorded in this session.</td></tr>`;
+        if (miniList) miniList.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted); font-size:0.8rem">No recent logs.</div>`;
         return;
     }
 
     activityLogs.forEach((log, idx) => {
         const timeStr = new Date(log.time).toLocaleTimeString();
 
-        // 1. Full Logs Table Rows
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td><span class="log-timestamp">${new Date(log.time).toLocaleString()}</span></td>
-            <td><strong>${log.category}</strong></td>
-            <td>${log.description}</td>
-            <td><span class="badge ${log.status}">${log.status}</span></td>
-        `;
-        tbody.appendChild(tr);
+        if (tbody) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><span class="log-timestamp">${new Date(log.time).toLocaleString()}</span></td>
+                <td><strong>${log.category}</strong></td>
+                <td>${log.description}</td>
+                <td><span class="badge ${log.status}">${log.status}</span></td>
+            `;
+            tbody.appendChild(tr);
+        }
 
-        // 2. Mini Log Widget (Limit 5)
-        if (idx < 5) {
+        if (miniList && idx < 5) {
             const miniItem = document.createElement("div");
             miniItem.className = "mini-log-item";
             miniItem.innerHTML = `
@@ -640,7 +639,7 @@ function renderActivityLogs() {
 }
 
 // ==========================================
-// 6. ACTION & CRUD OPERATIONS HANDLERS
+// 6. ACTION & CRUD OPERATIONS (Global Scope)
 // ==========================================
 
 // --- Activity Logger Helper ---
@@ -654,25 +653,30 @@ function logActivity(description, category, status = "success") {
     renderActivityLogs();
 }
 
-// --- Modal Display Utilities ---
-function openModal(modalId) {
-    document.getElementById(modalId).classList.add("open");
-}
+// --- Modal Display Utilities (Direct styling toggles as requested) ---
+window.openModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = "flex";
+    }
+};
 
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove("open");
-}
+window.closeModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = "none";
+    }
+};
 
-// --- Keynote Speakers CRUD ---
-function openSpeakerModal(index = -1) {
-    const modal = document.getElementById("speakerModal");
+// --- Speakers CRUD ---
+window.openSpeakerModal = function(index = -1) {
     const form = document.getElementById("speakerForm");
     const titleEl = document.getElementById("speakerModalTitle");
+    if (!form) return;
 
     form.reset();
 
     if (index >= 0) {
-        // Edit Mode
         titleEl.innerText = "Edit Speaker Profile";
         document.getElementById("speakerEditIndex").value = index;
         document.getElementById("speakerName").value = speakers[index].name;
@@ -680,13 +684,12 @@ function openSpeakerModal(index = -1) {
         document.getElementById("speakerPhoto").value = speakers[index].photo || "";
         document.getElementById("speakerBio").value = speakers[index].bio;
     } else {
-        // Create Mode
         titleEl.innerText = "Add New Keynote Speaker";
         document.getElementById("speakerEditIndex").value = "";
     }
 
     openModal("speakerModal");
-}
+};
 
 function handleSpeakerSubmit(e) {
     e.preventDefault();
@@ -697,12 +700,10 @@ function handleSpeakerSubmit(e) {
     const bio = document.getElementById("speakerBio").value.trim();
 
     if (indexVal !== "") {
-        // Update Action
         const idx = parseInt(indexVal);
         speakers[idx] = { name, title, photo, bio };
         logActivity(`Speaker profile updated: ${name}`, "Speakers", "success");
     } else {
-        // Create Action
         speakers.push({ name, title, photo, bio });
         logActivity(`New speaker profile created: ${name}`, "Speakers", "success");
     }
@@ -712,7 +713,7 @@ function handleSpeakerSubmit(e) {
     updateStats();
 }
 
-function deleteSpeaker(idx) {
+window.deleteSpeaker = function(idx) {
     if (confirm(`Are you sure you want to delete keynote speaker "${speakers[idx].name}"?`)) {
         const name = speakers[idx].name;
         speakers.splice(idx, 1);
@@ -720,18 +721,17 @@ function deleteSpeaker(idx) {
         renderSpeakers();
         updateStats();
     }
-}
+};
 
-// --- Committee Members CRUD ---
-function openCommitteeModal(index = -1) {
-    const modal = document.getElementById("committeeModal");
+// --- Committee CRUD ---
+window.openCommitteeModal = function(index = -1) {
     const form = document.getElementById("committeeForm");
     const titleEl = document.getElementById("committeeModalTitle");
+    if (!form) return;
 
     form.reset();
 
     if (index >= 0) {
-        // Edit Mode
         titleEl.innerText = "Edit Committee Member";
         document.getElementById("committeeEditIndex").value = index;
         document.getElementById("committeeName").value = committee[index].name;
@@ -739,13 +739,12 @@ function openCommitteeModal(index = -1) {
         document.getElementById("committeeOrg").value = committee[index].org;
         document.getElementById("committeeCategory").value = committee[index].category;
     } else {
-        // Create Mode
         titleEl.innerText = "Add Committee Member";
         document.getElementById("committeeEditIndex").value = "";
     }
 
     openModal("committeeModal");
-}
+};
 
 function handleCommitteeSubmit(e) {
     e.preventDefault();
@@ -768,37 +767,35 @@ function handleCommitteeSubmit(e) {
     renderCommittee();
 }
 
-function deleteCommittee(idx) {
+window.deleteCommittee = function(idx) {
     if (confirm(`Are you sure you want to delete committee member "${committee[idx].name}"?`)) {
         const name = committee[idx].name;
         committee.splice(idx, 1);
         logActivity(`Committee member removed: ${name}`, "Committee", "danger");
         renderCommittee();
     }
-}
+};
 
 // --- Timeline Schedule CRUD ---
-function openEventModal(index = -1) {
-    const modal = document.getElementById("eventModal");
+window.openEventModal = function(index = -1) {
     const form = document.getElementById("eventForm");
     const titleEl = document.getElementById("eventModalTitle");
+    if (!form) return;
 
     form.reset();
 
     if (index >= 0) {
-        // Edit Mode
         titleEl.innerText = "Edit Schedule Event";
         document.getElementById("eventEditIndex").value = index;
         document.getElementById("eventName").value = scheduleEvents[index].name;
         document.getElementById("eventDate").value = scheduleEvents[index].date;
     } else {
-        // Create Mode
         titleEl.innerText = "Add Timeline Event";
         document.getElementById("eventEditIndex").value = "";
     }
 
     openModal("eventModal");
-}
+};
 
 function handleEventSubmit(e) {
     e.preventDefault();
@@ -820,7 +817,7 @@ function handleEventSubmit(e) {
     updateStats();
 }
 
-function deleteEvent(idx) {
+window.deleteEvent = function(idx) {
     if (confirm(`Are you sure you want to delete event "${scheduleEvents[idx].name}"?`)) {
         const name = scheduleEvents[idx].name;
         scheduleEvents.splice(idx, 1);
@@ -828,26 +825,26 @@ function deleteEvent(idx) {
         renderSchedule();
         updateStats();
     }
-}
+};
 
-// --- Registration Approval Operations ---
-function approveRegistration(idx) {
+// --- Registrations Approvals ---
+window.approveRegistration = function(idx) {
     const name = registrations[idx].name;
     registrations[idx].status = "Approved";
-    logActivity(`Registration approved for ${name}. Status badge updated.`, "Registrations", "success");
+    logActivity(`Registration approved for ${name}.`, "Registrations", "success");
     renderRegistrations();
     updateStats();
-}
+};
 
-function rejectRegistration(idx) {
+window.rejectRegistration = function(idx) {
     if (confirm(`Are you sure you want to REJECT the registration of "${registrations[idx].name}"?`)) {
         const name = registrations[idx].name;
         registrations[idx].status = "Rejected";
-        logActivity(`Registration rejected for ${name}. Payment status marked void.`, "Registrations", "danger");
+        logActivity(`Registration rejected for ${name}.`, "Registrations", "danger");
         renderRegistrations();
         updateStats();
     }
-}
+};
 
 // --- Announcements CRUD ---
 function handleAnnouncementSubmit(e) {
@@ -867,10 +864,10 @@ function handleAnnouncementSubmit(e) {
     renderAnnouncements();
 }
 
-function deleteAnnouncement(idx) {
+window.deleteAnnouncement = function(idx) {
     if (confirm("Are you sure you want to delete this announcement? It will be removed from the feed.")) {
         announcements.splice(idx, 1);
         logActivity("Announcement removed from the public board.", "Announcements", "danger");
         renderAnnouncements();
     }
-}
+};

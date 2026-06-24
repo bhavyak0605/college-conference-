@@ -4,20 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VISTA 2027 Admin Dashboard</title>
-    <link rel="stylesheet" href="/admin/admin.css">
+    <!-- CSS link as required -->
+    <link rel="stylesheet" href="admin.css">
+    <!-- Font Awesome CDN as required -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="dashboard-body">
 
-    <!-- Header Navbar -->
-    <header class="admin-navbar">
+    <!-- Top Navbar -->
+    <header class="dashboard-navbar">
         <div class="nav-left">
             <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle Navigation">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="logo-wrapper">
-                <img src="/img/clg logo.png" alt="Bharti Vidyapeeth Logo" class="nav-logo" onerror="this.style.display='none'">
+                <!-- Relative logo link as required -->
+                <img src="../img/clg logo.png" alt="Bharti Vidyapeeth Logo" class="nav-logo" onerror="this.style.display='none'">
                 <div class="logo-text-stack">
                     <span class="logo-title">VISTA 2027</span>
                     <span class="logo-subtitle">Admin Portal</span>
@@ -42,9 +45,11 @@
         </div>
     </header>
 
-    <div class="dashboard-container">
+    <!-- Content Wrapper -->
+    <div class="dashboard-wrapper">
+        
         <!-- Sidebar Navigation -->
-        <aside class="admin-sidebar" id="adminSidebar">
+        <aside class="dashboard-sidebar" id="adminSidebar">
             <nav class="sidebar-nav">
                 <ul class="nav-list">
                     <li class="nav-item active" data-tab="overview">
@@ -87,7 +92,7 @@
         </aside>
 
         <!-- Main Dashboard Viewport -->
-        <main class="main-viewport" id="mainViewport">
+        <main class="dashboard-main" id="mainViewport">
             
             <!-- SECTION 1: OVERVIEW -->
             <section class="tab-panel active" id="overview-panel">
@@ -140,7 +145,7 @@
                     </div>
                 </div>
 
-                <!-- Overview Charts / Summary Lists Grid -->
+                <!-- Overview Detail Lists Grid -->
                 <div class="overview-details-grid">
                     <div class="details-card glass-card">
                         <div class="card-header">
@@ -483,7 +488,7 @@
         </div>
     </div>
 
-    <!-- Script File -->
-    <script src="/admin/admin.js"></script>
+    <!-- Script link with defer as required -->
+    <script src="admin.js" defer></script>
 </body>
 </html>
