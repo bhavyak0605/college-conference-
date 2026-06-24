@@ -1,585 +1,876 @@
-// admin.js - Controller for Admin Login & Dashboard
+import { auth } from "./firebase.js";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import { auth, db } from "../firebase.js";
-import { 
-    signInWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signOut 
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-import { 
-    collection, 
-    addDoc, 
-    updateDoc, 
-    deleteDoc, 
-    doc, 
-    onSnapshot 
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+// Protect dashboard
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
+});
 
-// Global Toast System
-function showToast(message, type = "success") {
-    const container = document.getElementById("toastContainer");
-    if (!container) return;
+// Login
+const loginForm = document.getElementById("loginForm");
 
-    const toast = document.createElement("div");
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <i class="fas ${type === "success" ? "fa-circle-check" : "fa-triangle-exclamation"}"></i>
-        <span>${message}</span>
-    `;
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    container.appendChild(toast);
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    // Auto dismiss
-    setTimeout(() => {
-        toast.classList.add("toast-out");
-        toast.addEventListener("animationend", () => {
-            toast.remove();
-        });
-    }, 4000);
-}
-
-// Global Modal System
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.classList.add("active");
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.classList.remove("active");
-}
-
-// Activity Log Helper
-function logActivity(action, content, desc = "") {
-    const logs = JSON.parse(localStorage.getItem("admin_activity_logs") || "[]");
-    const newLog = {
-        action, // 'create', 'edit', 'delete', 'system'
-        content,
-        desc,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-    logs.unshift(newLog);
-    // Keep last 10 logs
-    if (logs.length > 10) logs.pop();
-    localStorage.setItem("admin_activity_logs", JSON.stringify(logs));
-    updateActivityPanel();
-}
-
-function updateActivityPanel() {
-    const list = document.getElementById("activityTimeline");
-    if (!list) return;
-
-    const logs = JSON.parse(localStorage.getItem("admin_activity_logs") || "[]");
-    
-    if (logs.length === 0) {
-        list.innerHTML = `
-            <li class="timeline-item system">
-                <div class="timeline-marker"></div>
-                <div class="timeline-info">
-                    <span class="timeline-time">Just Now</span>
-                </div>
-                <div class="timeline-content">No recent activity</div>
-                <p class="timeline-desc">Perform CRUD operations to see logs here.</p>
-            </li>
-        `;
-        return;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = "admin-dashboard.html";
+    } catch (error) {
+      alert(error.message);
     }
-
-    list.innerHTML = logs.map(log => `
-        <li class="timeline-item ${log.action}">
-            <div class="timeline-marker"></div>
-            <div class="timeline-info">
-                <span class="timeline-time">${log.timestamp}</span>
-            </div>
-            <div class="timeline-content">${log.content}</div>
-            ${log.desc ? `<p class="timeline-desc">${log.desc}</p>` : ""}
-        </li>
-    `).join("");
+  });
 }
 
-// Prepopulate activity log if empty
-if (!localStorage.getItem("admin_activity_logs")) {
-    localStorage.setItem("admin_activity_logs", JSON.stringify([
-        { action: "system", content: "Admin Panel initialized", desc: "Successfully loaded secure dashboard elements.", timestamp: "10:30 AM" },
-        { action: "system", content: "Connected to Firebase", desc: "Established real-time sync with Cloud Firestore.", timestamp: "10:31 AM" }
-    ]));
-}
+// Logout
+const logoutBtn = document.getElementById("logoutBtn");
 
-// Initialize Admin Panel Code Routing
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  });
+}
+let speakers = [
+    {
+        name: "Dr. Ramesh K. Somashekar",
+        title: "Professor, IISc Bangalore",
+        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
+        bio: "Dr. Ramesh Somashekar is a leading academician at IISc, specializing in Artificial Intelligence for clinical healthcare. He has authored over 80+ peer-reviewed journal papers and serves on the advisory boards of major biomedical research councils."
+    },
+    {
+        name: "Dr. Arlene Peterson",
+        title: "Senior AI Scientist, OpenAI",
+        photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200",
+        bio: "Dr. Peterson works in San Francisco focusing on scaling laws for Large Multimodal Models (LMMs). Prior to OpenAI, she received her PhD from Stanford University and worked on foundational NLP systems."
+    },
+    {
+        name: "Prof. Hiroshi Tanaka",
+        title: "Director of Robotics, Tokyo Tech",
+        photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200",
+        bio: "Professor Tanaka leads the Autonomous Systems Lab at Tokyo Institute of Technology. His research includes tactile sensing, cobotics, and smart city robotic automation frameworks for heavy industries."
+    }
+];
+
+let committee = [
+    {
+        name: "Dr. Patangrao Kadam",
+        role: "Founder Chancellor",
+        org: "Bharati Vidyapeeth, Pune",
+        category: "Chief Patron"
+    },
+    {
+        name: "Dr. Vishwajeet Kadam",
+        role: "Secretary & Pro-Vice Chancellor",
+        org: "Bharati Vidyapeeth University, Pune",
+        category: "Chief Patron"
+    },
+    {
+        name: "Dr. Anand Bhalerao",
+        role: "Principal & Dean",
+        org: "BVDU College of Engineering, Pune",
+        category: "Organizing Committee"
+    },
+    {
+        name: "Dr. Sandeep Upadhyaya",
+        role: "Head of Department (Computer Science)",
+        org: "BVDU College of Engineering, Pune",
+        category: "Organizing Committee"
+    },
+    {
+        name: "Prof. Deborah Johnson",
+        role: "Emerita Professor of Applied Ethics",
+        org: "University of Virginia, USA",
+        category: "Advisory Board"
+    },
+    {
+        name: "Dr. Manisha Desai",
+        role: "Professor & Technical Lead",
+        org: "Bharati Vidyapeeth University, Pune",
+        category: "Technical Advisor"
+    }
+];
+
+let scheduleEvents = [
+    { name: "Full Paper Submission Deadline", date: "15th April, 2027" },
+    { name: "Notification of Acceptance/Rejection", date: "15th May, 2027" },
+    { name: "Camera Ready Copy & Registration Due", date: "1st June, 2027" },
+    { name: "Conference Inauguration & Keynote Speech", date: "15th July, 2027" },
+    { name: "Parallel Technical Sessions & Workshops", date: "16th July, 2027" },
+    { name: "Valedictory Ceremony & Best Paper Awards", date: "17th July, 2027" }
+];
+
+let registrations = [
+    {
+        name: "Bhavya Kadam",
+        email: "bhavya.kadam@example.com",
+        country: "India",
+        category: "Academician",
+        amount: "₹5,000",
+        txnId: "TXN9081234",
+        status: "Approved"
+    },
+    {
+        name: "Dr. Sarah Jenkins",
+        email: "s.jenkins@example.com",
+        country: "United States",
+        category: "Academician",
+        amount: "₹8,500",
+        txnId: "TXN9081546",
+        status: "Pending"
+    },
+    {
+        name: "Aditya Sharma",
+        email: "aditya.sharma@example.com",
+        country: "India",
+        category: "Student",
+        amount: "₹3,000",
+        txnId: "TXN9081890",
+        status: "Approved"
+    },
+    {
+        name: "Prof. Kenji Sato",
+        email: "k.sato@example.com",
+        country: "Japan",
+        category: "Industry Professional",
+        amount: "₹10,000",
+        txnId: "TXN9081999",
+        status: "Rejected"
+    }
+];
+
+let announcements = [
+    {
+        text: "Welcome to the VISTA 2027 Admin Portal! You can add, edit, and delete speakers, committee members, and timeline events in real-time.",
+        time: "2026-06-25T00:01:00.000Z",
+        author: "System Administrator"
+    },
+    {
+        text: "The paper submission deadline has been officially extended to April 15th, 2027 to accommodate international submissions.",
+        time: "2026-06-24T18:30:00.000Z",
+        author: "Admin Coordinator"
+    }
+];
+
+let activityLogs = [
+    {
+        time: "2026-06-25T00:15:22.000Z",
+        category: "System",
+        description: "Admin session initialized successfully.",
+        status: "success"
+    },
+    {
+        time: "2026-06-24T23:59:12.000Z",
+        category: "Registrations",
+        description: "New registration received from Dr. Sarah Jenkins (USA).",
+        status: "info"
+    }
+];
+
+// ==========================================
+// 2. HELPER FUNCTIONS & DOM INITIALIZATION
+// ==========================================
+
 document.addEventListener("DOMContentLoaded", () => {
-    // Determine Page
     const loginForm = document.getElementById("loginForm");
-    const dashboardBody = document.getElementById("dashboardBody");
-
     if (loginForm) {
-        initLoginPage();
-    } else if (dashboardBody) {
+        initLoginPage(loginForm);
+    } else {
         initDashboardPage();
     }
 });
 
-/* ==========================================================================
-   Login Page Logic
-   ========================================================================== */
-function initLoginPage() {
-    const form = document.getElementById("loginForm");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const submitBtn = document.getElementById("loginBtn");
+function initLoginPage(loginForm) {
     const togglePasswordBtn = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
     const errorBox = document.getElementById("errorBox");
     const errorText = document.getElementById("errorText");
-    const rememberMe = document.getElementById("rememberMe");
+    const loginBtn = document.getElementById("loginBtn");
 
-    // Check pre-saved email
-    if (localStorage.getItem("admin_remember_email")) {
-        emailInput.value = localStorage.getItem("admin_remember_email");
-        rememberMe.checked = true;
+    if (togglePasswordBtn && passwordInput) {
+        togglePasswordBtn.addEventListener("click", () => {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            const icon = togglePasswordBtn.querySelector("i");
+            if (icon) {
+                icon.classList.toggle("fa-eye");
+                icon.classList.toggle("fa-eye-slash");
+            }
+        });
     }
 
-    // Toggle Password Visibility
-    togglePasswordBtn.addEventListener("click", () => {
-        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-        passwordInput.setAttribute("type", type);
-        togglePasswordBtn.querySelector("i").className = type === "password" ? "fas fa-eye" : "fas fa-eye-slash";
-    });
-
-    // Form Submit
-    form.addEventListener("submit", async (e) => {
+    loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        
-        // Hide previous errors
-        errorBox.style.display = "none";
-        
-        // Form Validation
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
 
-        if (!email || !password) {
-            showError("Please enter both email and password.");
-            return;
+        if (loginBtn) {
+            loginBtn.classList.add("loading");
+            loginBtn.disabled = true;
+        }
+        if (errorBox) {
+            errorBox.classList.remove("show");
         }
 
-        // Show loading state
-        submitBtn.classList.add("loading");
-        submitBtn.disabled = true;
-
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            
-            // Handle Remember Me
-            if (rememberMe.checked) {
-                localStorage.setItem("admin_remember_email", email);
+        setTimeout(() => {
+            // Mock authentication check supporting both vista & placeholder emails with admin123
+            if ((email === "admin@vista2027.edu.in" || email === "admin@bvvistacon.in") && password === "admin123") {
+                window.location.href = "admin-dashboard.html";
             } else {
-                localStorage.removeItem("admin_remember_email");
+                if (loginBtn) {
+                    loginBtn.classList.remove("loading");
+                    loginBtn.disabled = false;
+                }
+                if (errorBox && errorText) {
+                    errorText.innerText = "Invalid email or password. Please try again.";
+                    errorBox.classList.add("show");
+                }
             }
+        }, 1200); // Simulated secure authentication delay
+    });
+}
 
-            // Redirect to Dashboard
-            window.location.href = "admin-dashboard.html";
+function initDashboardPage() {
+    // Initial UI Render
+    updateStats();
+    renderSpeakers();
+    renderCommittee();
+    renderSchedule();
+    renderRegistrations();
+    renderAnnouncements();
+    renderActivityLogs();
 
-        } catch (error) {
-            console.error("Auth error:", error);
-            let userFriendlyMsg = error.message;
-            if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
-                userFriendlyMsg = "Invalid email or password. Please try again.";
-            } else if (error.code === "auth/invalid-email") {
-                userFriendlyMsg = "Please enter a valid email address.";
+    // Attach SPA Navigation Events
+    const navItems = document.querySelectorAll(".nav-item");
+    navItems.forEach(item => {
+        item.addEventListener("click", () => {
+            const tabName = item.getAttribute("data-tab");
+            switchTab(tabName);
+
+            // On Mobile view, close the sidebar drawer after selecting a tab
+            if (window.innerWidth <= 768) {
+                document.getElementById("adminSidebar").classList.remove("open");
             }
-            showError(userFriendlyMsg);
-            submitBtn.classList.remove("loading");
-            submitBtn.disabled = false;
+        });
+    });
+
+    // Mobile Sidebar Drawer Toggle
+    const menuToggleBtn = document.getElementById("menuToggleBtn");
+    const adminSidebar = document.getElementById("adminSidebar");
+    if (menuToggleBtn && adminSidebar) {
+        menuToggleBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            adminSidebar.classList.toggle("open");
+        });
+    }
+
+    // Close mobile sidebar if clicked outside of it
+    document.addEventListener("click", (e) => {
+        const adminSidebar = document.getElementById("adminSidebar");
+        const menuToggleBtn = document.getElementById("menuToggleBtn");
+        if (window.innerWidth <= 768 && adminSidebar && adminSidebar.classList.contains("open")) {
+            if (!adminSidebar.contains(e.target) && e.target !== menuToggleBtn) {
+                adminSidebar.classList.remove("open");
+            }
         }
     });
 
-    function showError(msg) {
-        errorText.innerText = msg;
-        errorBox.style.display = "flex";
+    // Logout Action Trigger
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            logActivity("Logout trigger initialized.", "System", "warning");
+            alert("You have successfully logged out of the session (Mock Portal). Click OK to refresh the view.");
+            window.location.reload();
+        });
+    }
+
+    // Modal Add Button Listeners
+    const addSpeakerBtn = document.getElementById("addSpeakerBtn");
+    if (addSpeakerBtn) {
+        addSpeakerBtn.addEventListener("click", () => {
+            openSpeakerModal();
+        });
+    }
+
+    const addCommitteeBtn = document.getElementById("addCommitteeBtn");
+    if (addCommitteeBtn) {
+        addCommitteeBtn.addEventListener("click", () => {
+            openCommitteeModal();
+        });
+    }
+
+    const addEventBtn = document.getElementById("addEventBtn");
+    if (addEventBtn) {
+        addEventBtn.addEventListener("click", () => {
+            openEventModal();
+        });
+    }
+
+    // Form Submissions
+    const speakerForm = document.getElementById("speakerForm");
+    if (speakerForm) {
+        speakerForm.addEventListener("submit", handleSpeakerSubmit);
+    }
+
+    const committeeForm = document.getElementById("committeeForm");
+    if (committeeForm) {
+        committeeForm.addEventListener("submit", handleCommitteeSubmit);
+    }
+
+    const eventForm = document.getElementById("eventForm");
+    if (eventForm) {
+        eventForm.addEventListener("submit", handleEventSubmit);
+    }
+
+    const announcementForm = document.getElementById("announcementForm");
+    if (announcementForm) {
+        announcementForm.addEventListener("submit", handleAnnouncementSubmit);
+    }
+
+    // Clear Logs Button
+    const clearLogsBtn = document.getElementById("clearLogsBtn");
+    if (clearLogsBtn) {
+        clearLogsBtn.addEventListener("click", () => {
+            activityLogs = [];
+            logActivity("All activity logs cleared by admin.", "System", "danger");
+            renderActivityLogs();
+        });
     }
 }
 
-/* ==========================================================================
-   Dashboard Page Logic
-   ========================================================================== */
-function initDashboardPage() {
-    let speakersList = [];
-    let editingSpeakerId = null;
-    let deletingSpeakerId = null;
+// ==========================================
+// 3. SPA TAB NAVIGATION
+// ==========================================
 
-    // 1. Auth Guard
-    onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            window.location.href = "admin-login.html";
+function switchTab(tabName) {
+    // Remove active class from all nav list items
+    const navItems = document.querySelectorAll(".nav-item");
+    navItems.forEach(item => {
+        if (item.getAttribute("data-tab") === tabName) {
+            item.classList.add("active");
         } else {
-            // Render Profile Info
-            const nameEl = document.getElementById("adminProfileName");
-            const avatarEl = document.getElementById("adminProfileAvatar");
-            if (nameEl) nameEl.textContent = user.email.split("@")[0];
-            if (avatarEl) avatarEl.textContent = user.email.charAt(0).toUpperCase();
-            
-            // Sync with DB
-            syncSpeakers();
+            item.classList.remove("active");
         }
     });
 
-    // 2. Logout Action
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-            try {
-                await signOut(auth);
-                window.location.href = "admin-login.html";
-            } catch (err) {
-                showToast("Failed to sign out: " + err.message, "error");
-            }
-        });
-    }
-
-    // 3. Real-time Firestore Sync
-    function syncSpeakers() {
-        const tbody = document.getElementById("speakersTableBody");
-        if (!tbody) return;
-
-        // Show Skeleton Loader Initially
-        tbody.innerHTML = `
-            <tr class="skeleton-row"><td><div class="skeleton-text skeleton-name"></div><div class="skeleton-text skeleton-title"></div></td><td><div class="skeleton-text skeleton-bio"></div></td><td><div class="skeleton-text skeleton-actions"></div></td></tr>
-            <tr class="skeleton-row"><td><div class="skeleton-text skeleton-name"></div><div class="skeleton-text skeleton-title"></div></td><td><div class="skeleton-text skeleton-bio"></div></td><td><div class="skeleton-text skeleton-actions"></div></td></tr>
-            <tr class="skeleton-row"><td><div class="skeleton-text skeleton-name"></div><div class="skeleton-text skeleton-title"></div></td><td><div class="skeleton-text skeleton-bio"></div></td><td><div class="skeleton-text skeleton-actions"></div></td></tr>
-        `;
-
-        onSnapshot(collection(db, "speakers"), (snapshot) => {
-            speakersList = [];
-            snapshot.forEach(doc => {
-                speakersList.push({
-                    id: doc.id,
-                    ...doc.data()
-                });
-            });
-
-            // Update Overview Cards
-            updateOverviewStats();
-
-            // Render Table Content
-            renderSpeakersTable();
-        }, (error) => {
-            console.error("Firestore sync error:", error);
-            tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--danger); padding: 20px;">Failed to sync data: ${error.message}</td></tr>`;
-        });
-    }
-
-    // 4. Update Overview Stats
-    function updateOverviewStats() {
-        const totalSpeakersEl = document.getElementById("statTotalSpeakers");
-        const totalUpdatesEl = document.getElementById("statTotalUpdates");
-        const activePagesEl = document.getElementById("statActivePages");
-        const recentChangesEl = document.getElementById("statRecentChanges");
-
-        if (totalSpeakersEl) totalSpeakersEl.textContent = speakersList.length;
-        
-        // Compute mock analytics based on active pages and recent activity
-        if (activePagesEl) activePagesEl.textContent = "12"; // index, cfp, committee, contact, publication, registrations, schedule, sessions, speaker, venue, awards, gallery
-        
-        const logs = JSON.parse(localStorage.getItem("admin_activity_logs") || "[]");
-        if (recentChangesEl) recentChangesEl.textContent = logs.length;
-        if (totalUpdatesEl) {
-            // Compute lifetime edits
-            let count = parseInt(localStorage.getItem("total_lifetime_edits") || "14");
-            totalUpdatesEl.textContent = count;
+    // Hide all panels and show active panel
+    const panels = document.querySelectorAll(".tab-panel");
+    panels.forEach(panel => {
+        if (panel.id === `${tabName}-panel`) {
+            panel.classList.add("active");
+        } else {
+            panel.classList.remove("active");
         }
+    });
+
+    // Scroll main container to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ==========================================
+// 4. STATS METRICS UPDATE
+// ==========================================
+
+function updateStats() {
+    document.getElementById("stat-speakers").innerText = speakers.length;
+    document.getElementById("stat-registrations").innerText = registrations.length;
+    document.getElementById("stat-events").innerText = scheduleEvents.length;
+
+    // Calculate pending registrations
+    const pendingCount = registrations.filter(r => r.status === "Pending").length;
+    document.getElementById("stat-pending").innerText = pendingCount;
+}
+
+// ==========================================
+// 5. RENDERING PIPELINES (DASHBOARD VIEWS)
+// ==========================================
+
+// --- Speakers Rendering ---
+function renderSpeakers() {
+    const grid = document.getElementById("speakersAdminGrid");
+    grid.innerHTML = "";
+
+    if (speakers.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--text-secondary)">No keynote speakers found. Click "Add New Speaker" to create one.</div>`;
+        return;
     }
 
-    // Increments edit counter in localStorage
-    function incrementEditCount() {
-        let count = parseInt(localStorage.getItem("total_lifetime_edits") || "14");
-        localStorage.setItem("total_lifetime_edits", count + 1);
-    }
+    speakers.forEach((sp, idx) => {
+        const photoHtml = sp.photo
+            ? `<img src="${sp.photo}" alt="${sp.name}" class="speaker-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+               <div class="speaker-img-fallback" style="display:none;"><i class="fas fa-user"></i></div>`
+            : `<div class="speaker-img-fallback" style="display:flex;"><i class="fas fa-user"></i></div>`;
 
-    // 5. Render Table with Search & Filters
-    function renderSpeakersTable() {
-        const tbody = document.getElementById("speakersTableBody");
-        if (!tbody) return;
-
-        const searchVal = document.getElementById("searchSpeaker").value.toLowerCase().trim();
-        const filterVal = document.getElementById("filterTrack").value; // UI Filter
-
-        // Filter local array
-        let filtered = speakersList;
-
-        if (searchVal) {
-            filtered = filtered.filter(s => 
-                (s.name && s.name.toLowerCase().includes(searchVal)) || 
-                (s.title && s.title.toLowerCase().includes(searchVal)) ||
-                (s.bio && s.bio.toLowerCase().includes(searchVal))
-            );
-        }
-
-        // Render rows
-        if (filtered.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="3">
-                        <div class="empty-state">
-                            <i class="fas fa-users-slash"></i>
-                            <p>No speakers found matching the search criteria.</p>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        tbody.innerHTML = filtered.map(speaker => `
-            <tr>
-                <td>
-                    <div class="speaker-meta">
-                        <span class="speaker-name-td">${speaker.name || "N/A"}</span>
-                        <span class="speaker-title-td">${speaker.title || "No Title"}</span>
-                    </div>
-                </td>
-                <td>
-                    <div class="speaker-bio-td" title="${speaker.bio || ''}">${speaker.bio || "No bio entered."}</div>
-                </td>
-                <td>
-                    <div class="actions-cell">
-                        <button class="btn-icon preview btn-preview-speaker" data-id="${speaker.id}" title="Preview Card">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn-icon edit btn-edit-speaker" data-id="${speaker.id}" title="Edit Speaker">
-                            <i class="fas fa-pen-to-square"></i>
-                        </button>
-                        <button class="btn-icon delete btn-delete-speaker" data-id="${speaker.id}" title="Delete Speaker">
-                            <i class="fas fa-trash-can"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `).join("");
-
-        // Attach Row Action Listeners
-        document.querySelectorAll(".btn-preview-speaker").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const sId = btn.getAttribute("data-id");
-                showSpeakerPreview(sId);
-            });
-        });
-
-        document.querySelectorAll(".btn-edit-speaker").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const sId = btn.getAttribute("data-id");
-                showEditForm(sId);
-            });
-        });
-
-        document.querySelectorAll(".btn-delete-speaker").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const sId = btn.getAttribute("data-id");
-                showDeleteConfirm(sId);
-            });
-        });
-    }
-
-    // 6. Search & Filter Input Listeners
-    const searchInput = document.getElementById("searchSpeaker");
-    if (searchInput) {
-        searchInput.addEventListener("input", renderSpeakersTable);
-    }
-
-    const filterSelect = document.getElementById("filterTrack");
-    if (filterSelect) {
-        filterSelect.addEventListener("change", renderSpeakersTable);
-    }
-
-    // 7. Modal Form Submit (Add/Edit)
-    const speakerForm = document.getElementById("speakerForm");
-    if (speakerForm) {
-        speakerForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById("speakerName").value.trim();
-            const title = document.getElementById("speakerTitle").value.trim();
-            const bio = document.getElementById("speakerBio").value.trim();
-
-            if (!name || !title || !bio) {
-                showToast("Please fill in all speaker fields.", "error");
-                return;
-            }
-
-            const submitBtn = speakerForm.querySelector("button[type='submit']");
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving...`;
-
-            try {
-                if (editingSpeakerId) {
-                    // Update CRUD
-                    await updateDoc(doc(db, "speakers", editingSpeakerId), { name, title, bio });
-                    showToast("Speaker updated successfully!");
-                    logActivity("edit", `Edited speaker "${name}"`, `Updated profile details for speaker.`);
-                    incrementEditCount();
-                } else {
-                    // Create CRUD
-                    await addDoc(collection(db, "speakers"), { name, title, bio });
-                    showToast("Speaker added successfully!");
-                    logActivity("create", `Added speaker "${name}"`, `Registered new speaker to database.`);
-                    incrementEditCount();
-                }
-
-                closeModal("speakerModal");
-                speakerForm.reset();
-                editingSpeakerId = null;
-
-            } catch (error) {
-                console.error("Save speaker error:", error);
-                showToast("Failed to save speaker: " + error.message, "error");
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            }
-        });
-    }
-
-    // 8. Open Add Form Trigger
-    const btnAddSpeaker = document.getElementById("btnAddSpeaker");
-    if (btnAddSpeaker) {
-        btnAddSpeaker.addEventListener("click", () => {
-            editingSpeakerId = null;
-            document.getElementById("modalTitle").textContent = "Add Speaker";
-            speakerForm.reset();
-            openModal("speakerModal");
-        });
-    }
-
-    // 9. Load speaker data for Edit
-    function showEditForm(id) {
-        const speaker = speakersList.find(s => s.id === id);
-        if (!speaker) return;
-
-        editingSpeakerId = id;
-        document.getElementById("modalTitle").textContent = "Edit Speaker Details";
-        document.getElementById("speakerName").value = speaker.name || "";
-        document.getElementById("speakerTitle").value = speaker.title || "";
-        document.getElementById("speakerBio").value = speaker.bio || "";
-        
-        openModal("speakerModal");
-    }
-
-    // 10. Open Delete Confirmation Modal
-    function showDeleteConfirm(id) {
-        const speaker = speakersList.find(s => s.id === id);
-        if (!speaker) return;
-
-        deletingSpeakerId = id;
-        document.getElementById("deleteSpeakerName").textContent = speaker.name;
-        openModal("deleteConfirmModal");
-    }
-
-    // 11. Confirm Delete Action
-    const btnConfirmDelete = document.getElementById("btnConfirmDelete");
-    if (btnConfirmDelete) {
-        btnConfirmDelete.addEventListener("click", async () => {
-            if (!deletingSpeakerId) return;
-
-            const speaker = speakersList.find(s => s.id === deletingSpeakerId);
-            const name = speaker ? speaker.name : "Speaker";
-
-            btnConfirmDelete.disabled = true;
-            btnConfirmDelete.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Deleting...`;
-
-            try {
-                await deleteDoc(doc(db, "speakers", deletingSpeakerId));
-                showToast(`Deleted ${name} successfully.`);
-                logActivity("delete", `Deleted speaker "${name}"`, `Removed speaker record from Firestore.`);
-                incrementEditCount();
-                closeModal("deleteConfirmModal");
-            } catch (error) {
-                console.error("Delete error:", error);
-                showToast("Failed to delete speaker: " + error.message, "error");
-            } finally {
-                btnConfirmDelete.disabled = false;
-                btnConfirmDelete.innerHTML = "Yes, Delete";
-                deletingSpeakerId = null;
-            }
-        });
-    }
-
-    // 12. Show Speaker Card Preview
-    function showSpeakerPreview(id) {
-        const speaker = speakersList.find(s => s.id === id);
-        if (!speaker) return;
-
-        const container = document.getElementById("speakerPreviewContainer");
-        if (!container) return;
-
-        container.innerHTML = `
-            <div class="preview-speaker-card">
-                <div class="preview-speaker-avatar">
-                    <i class="fas fa-user-tie"></i>
+        const card = document.createElement("div");
+        card.className = "speaker-card-admin";
+        card.innerHTML = `
+            <div class="speaker-photo-wrapper">
+                ${photoHtml}
+                <div class="speaker-photo-overlay"></div>
+            </div>
+            <div class="speaker-info-body">
+                <h4>${sp.name}</h4>
+                <span class="speaker-title-tag">${sp.title}</span>
+                <p class="speaker-bio-text">${sp.bio}</p>
+                <div class="speaker-actions-row">
+                    <button class="card-btn-edit" onclick="openSpeakerModal(${idx})">
+                        <i class="fas fa-user-pen"></i> Edit
+                    </button>
+                    <button class="card-btn-delete" onclick="deleteSpeaker(${idx})">
+                        <i class="fas fa-trash-can"></i> Delete
+                    </button>
                 </div>
-                <h4 class="preview-speaker-name">${speaker.name}</h4>
-                <div class="preview-speaker-title">${speaker.title}</div>
-                <p class="preview-speaker-bio">${speaker.bio}</p>
             </div>
         `;
+        grid.appendChild(card);
+    });
+}
 
-        openModal("previewModal");
+// --- Committee Rendering ---
+function renderCommittee() {
+    const tbody = document.getElementById("committeeTableBody");
+    tbody.innerHTML = "";
+
+    if (committee.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary)">No committee members found. Click "Add Member" to create one.</td></tr>`;
+        return;
     }
 
-    // 13. Settings Form Submission (Simulated save / LocalStorage)
-    const settingsForm = document.getElementById("settingsForm");
-    if (settingsForm) {
-        // Load settings values
-        document.getElementById("siteTitle").value = localStorage.getItem("conf_site_title") || "VISTA 2027";
-        document.getElementById("siteEmail").value = localStorage.getItem("conf_site_email") || "hvmhetre@bvucoep.edu.in";
-        document.getElementById("siteVenue").value = localStorage.getItem("conf_site_venue") || "Bharti Vidyapeeth COE, Pune";
+    committee.forEach((member, idx) => {
+        // Build distinct badges for committee category
+        let badgeClass = "info";
+        if (member.category === "Chief Patron") badgeClass = "success";
+        else if (member.category === "Organizing Committee") badgeClass = "warning";
+        else if (member.category === "Advisory Board") badgeClass = "danger";
 
-        settingsForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            
-            const title = document.getElementById("siteTitle").value.trim();
-            const email = document.getElementById("siteEmail").value.trim();
-            const venue = document.getElementById("siteVenue").value.trim();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><span class="committee-member-name">${member.name}</span></td>
+            <td>${member.role}</td>
+            <td>${member.org}</td>
+            <td><span class="badge ${badgeClass}">${member.category}</span></td>
+            <td>
+                <div class="table-action-btns">
+                    <button class="table-action-btn edit" onclick="openCommitteeModal(${idx})" title="Edit Member">
+                        <i class="fas fa-user-pen"></i>
+                    </button>
+                    <button class="table-action-btn delete" onclick="deleteCommittee(${idx})" title="Delete Member">
+                        <i class="fas fa-trash-can"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
-            localStorage.setItem("conf_site_title", title);
-            localStorage.setItem("conf_site_email", email);
-            localStorage.setItem("conf_site_venue", venue);
+// --- Schedule Timeline Rendering ---
+function renderSchedule() {
+    const list = document.getElementById("timelineAdminList");
+    list.innerHTML = "";
 
-            showToast("Settings saved successfully!");
-            logActivity("system", "Updated website settings", "Saved general metadata settings to configuration.");
-            incrementEditCount();
-            updateOverviewStats();
-        });
+    if (scheduleEvents.length === 0) {
+        list.innerHTML = `<div style="text-align:center; padding:2rem; color:var(--text-secondary)">No schedule events found. Click "Add Event" to create one.</div>`;
+        return;
     }
 
-    // 14. Sidebar Panel Switching
-    const menuItems = document.querySelectorAll(".sidebar-item");
-    menuItems.forEach(item => {
-        item.addEventListener("click", (e) => {
-            e.preventDefault();
-            const target = item.getAttribute("data-target");
+    scheduleEvents.forEach((ev, idx) => {
+        const item = document.createElement("div");
+        item.className = "timeline-item-admin";
+        item.innerHTML = `
+            <div class="timeline-details">
+                <span class="timeline-time-badge"><i class="fas fa-clock"></i> ${ev.date}</span>
+                <span class="timeline-title">${ev.name}</span>
+            </div>
+            <div class="table-action-btns">
+                <button class="table-action-btn edit" onclick="openEventModal(${idx})" title="Edit Event">
+                    <i class="fas fa-pen-to-square"></i>
+                </button>
+                <button class="table-action-btn delete" onclick="deleteEvent(${idx})" title="Delete Event">
+                    <i class="fas fa-trash-can"></i>
+                </button>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+}
 
-            // Update sidebar active class
-            menuItems.forEach(mi => mi.classList.remove("active"));
-            item.classList.add("active");
+// --- Registrations Table Rendering ---
+function renderRegistrations() {
+    const tbody = document.getElementById("registrationsTableBody");
+    tbody.innerHTML = "";
 
-            // Hide all panel sections
-            document.querySelectorAll(".panel-section").forEach(sec => {
-                sec.style.display = "none";
-            });
+    if (registrations.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-secondary)">No registrations recorded.</td></tr>`;
+        return;
+    }
 
-            // Show active section
-            const targetSec = document.getElementById(target);
-            if (targetSec) targetSec.style.display = "block";
-        });
+    registrations.forEach((reg, idx) => {
+        let badgeClass = "warning";
+        if (reg.status === "Approved") badgeClass = "success";
+        else if (reg.status === "Rejected") badgeClass = "danger";
+
+        // Show action items only if pending
+        let actionsHtml = `<span style="color:var(--text-muted); font-size:0.8rem">No Actions</span>`;
+        if (reg.status === "Pending") {
+            actionsHtml = `
+                <div class="table-action-btns">
+                    <button class="table-action-btn approve" onclick="approveRegistration(${idx})" title="Approve Registration">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="table-action-btn reject" onclick="rejectRegistration(${idx})" title="Reject Registration">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><strong style="color:#fff">${reg.name}</strong></td>
+            <td>${reg.email}</td>
+            <td>${reg.country}</td>
+            <td>${reg.category}</td>
+            <td>${reg.amount}</td>
+            <td><code style="color:var(--gold); font-size:0.8rem">${reg.txnId}</code></td>
+            <td><span class="badge ${badgeClass}">${reg.status}</span></td>
+            <td>${actionsHtml}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// --- Announcements Feed Rendering ---
+function renderAnnouncements() {
+    const feed = document.getElementById("announcementFeedList");
+    const miniList = document.getElementById("announcements-mini-list");
+
+    feed.innerHTML = "";
+    miniList.innerHTML = "";
+
+    if (announcements.length === 0) {
+        feed.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted)">No announcements published.</div>`;
+        miniList.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted); font-size:0.8rem">No alerts.</div>`;
+        return;
+    }
+
+    announcements.forEach((ann, idx) => {
+        const publishDate = new Date(ann.time);
+        const timeStr = publishDate.toLocaleString();
+
+        // 1. Build main announcements panel feed item
+        const item = document.createElement("div");
+        item.className = "announcement-item";
+        item.innerHTML = `
+            <div class="announcement-meta">
+                <span class="announcement-author"><i class="fas fa-user-tie"></i> ${ann.author}</span>
+                <span class="announcement-date"><i class="fas fa-clock"></i> ${timeStr}</span>
+            </div>
+            <p class="announcement-msg">${ann.text}</p>
+            <button class="announcement-delete-btn" onclick="deleteAnnouncement(${idx})" title="Remove Alert">
+                <i class="fas fa-trash-can"></i>
+            </button>
+        `;
+        feed.appendChild(item);
+
+        // 2. Build mini-list widget items (Overview page limit 3)
+        if (idx < 3) {
+            const miniItem = document.createElement("div");
+            miniItem.className = "mini-announcement-item";
+            miniItem.innerHTML = `
+                <span class="mini-announcement-time"><i class="fas fa-clock"></i> ${timeStr}</span>
+                <p class="mini-announcement-text">${ann.text}</p>
+            `;
+            miniList.appendChild(miniItem);
+        }
+    });
+}
+
+// --- Activity Audit Logs Rendering ---
+function renderActivityLogs() {
+    const tbody = document.getElementById("logsTableBody");
+    const miniList = document.getElementById("logs-mini-list");
+
+    tbody.innerHTML = "";
+    miniList.innerHTML = "";
+
+    if (activityLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary)">No audit logs recorded in this session.</td></tr>`;
+        miniList.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted); font-size:0.8rem">No recent logs.</div>`;
+        return;
+    }
+
+    activityLogs.forEach((log, idx) => {
+        const timeStr = new Date(log.time).toLocaleTimeString();
+
+        // 1. Full Logs Table Rows
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><span class="log-timestamp">${new Date(log.time).toLocaleString()}</span></td>
+            <td><strong>${log.category}</strong></td>
+            <td>${log.description}</td>
+            <td><span class="badge ${log.status}">${log.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+
+        // 2. Mini Log Widget (Limit 5)
+        if (idx < 5) {
+            const miniItem = document.createElement("div");
+            miniItem.className = "mini-log-item";
+            miniItem.innerHTML = `
+                <div class="mini-log-content">
+                    <span class="mini-log-desc">${log.description}</span>
+                    <span class="mini-log-time"><i class="fas fa-clock"></i> ${timeStr}</span>
+                </div>
+                <span class="mini-log-badge ${log.status}">${log.status}</span>
+            `;
+            miniList.appendChild(miniItem);
+        }
+    });
+}
+
+// ==========================================
+// 6. ACTION & CRUD OPERATIONS HANDLERS
+// ==========================================
+
+// --- Activity Logger Helper ---
+function logActivity(description, category, status = "success") {
+    activityLogs.unshift({
+        time: new Date().toISOString(),
+        category: category,
+        description: description,
+        status: status
+    });
+    renderActivityLogs();
+}
+
+// --- Modal Display Utilities ---
+function openModal(modalId) {
+    document.getElementById(modalId).classList.add("open");
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove("open");
+}
+
+// --- Keynote Speakers CRUD ---
+function openSpeakerModal(index = -1) {
+    const modal = document.getElementById("speakerModal");
+    const form = document.getElementById("speakerForm");
+    const titleEl = document.getElementById("speakerModalTitle");
+
+    form.reset();
+
+    if (index >= 0) {
+        // Edit Mode
+        titleEl.innerText = "Edit Speaker Profile";
+        document.getElementById("speakerEditIndex").value = index;
+        document.getElementById("speakerName").value = speakers[index].name;
+        document.getElementById("speakerTitle").value = speakers[index].title;
+        document.getElementById("speakerPhoto").value = speakers[index].photo || "";
+        document.getElementById("speakerBio").value = speakers[index].bio;
+    } else {
+        // Create Mode
+        titleEl.innerText = "Add New Keynote Speaker";
+        document.getElementById("speakerEditIndex").value = "";
+    }
+
+    openModal("speakerModal");
+}
+
+function handleSpeakerSubmit(e) {
+    e.preventDefault();
+    const indexVal = document.getElementById("speakerEditIndex").value;
+    const name = document.getElementById("speakerName").value.trim();
+    const title = document.getElementById("speakerTitle").value.trim();
+    const photo = document.getElementById("speakerPhoto").value.trim();
+    const bio = document.getElementById("speakerBio").value.trim();
+
+    if (indexVal !== "") {
+        // Update Action
+        const idx = parseInt(indexVal);
+        speakers[idx] = { name, title, photo, bio };
+        logActivity(`Speaker profile updated: ${name}`, "Speakers", "success");
+    } else {
+        // Create Action
+        speakers.push({ name, title, photo, bio });
+        logActivity(`New speaker profile created: ${name}`, "Speakers", "success");
+    }
+
+    closeModal("speakerModal");
+    renderSpeakers();
+    updateStats();
+}
+
+function deleteSpeaker(idx) {
+    if (confirm(`Are you sure you want to delete keynote speaker "${speakers[idx].name}"?`)) {
+        const name = speakers[idx].name;
+        speakers.splice(idx, 1);
+        logActivity(`Speaker profile deleted: ${name}`, "Speakers", "danger");
+        renderSpeakers();
+        updateStats();
+    }
+}
+
+// --- Committee Members CRUD ---
+function openCommitteeModal(index = -1) {
+    const modal = document.getElementById("committeeModal");
+    const form = document.getElementById("committeeForm");
+    const titleEl = document.getElementById("committeeModalTitle");
+
+    form.reset();
+
+    if (index >= 0) {
+        // Edit Mode
+        titleEl.innerText = "Edit Committee Member";
+        document.getElementById("committeeEditIndex").value = index;
+        document.getElementById("committeeName").value = committee[index].name;
+        document.getElementById("committeeRole").value = committee[index].role;
+        document.getElementById("committeeOrg").value = committee[index].org;
+        document.getElementById("committeeCategory").value = committee[index].category;
+    } else {
+        // Create Mode
+        titleEl.innerText = "Add Committee Member";
+        document.getElementById("committeeEditIndex").value = "";
+    }
+
+    openModal("committeeModal");
+}
+
+function handleCommitteeSubmit(e) {
+    e.preventDefault();
+    const indexVal = document.getElementById("committeeEditIndex").value;
+    const name = document.getElementById("committeeName").value.trim();
+    const role = document.getElementById("committeeRole").value.trim();
+    const org = document.getElementById("committeeOrg").value.trim();
+    const category = document.getElementById("committeeCategory").value;
+
+    if (indexVal !== "") {
+        const idx = parseInt(indexVal);
+        committee[idx] = { name, role, org, category };
+        logActivity(`Committee member updated: ${name} (${category})`, "Committee", "success");
+    } else {
+        committee.push({ name, role, org, category });
+        logActivity(`New committee member added: ${name} (${category})`, "Committee", "success");
+    }
+
+    closeModal("committeeModal");
+    renderCommittee();
+}
+
+function deleteCommittee(idx) {
+    if (confirm(`Are you sure you want to delete committee member "${committee[idx].name}"?`)) {
+        const name = committee[idx].name;
+        committee.splice(idx, 1);
+        logActivity(`Committee member removed: ${name}`, "Committee", "danger");
+        renderCommittee();
+    }
+}
+
+// --- Timeline Schedule CRUD ---
+function openEventModal(index = -1) {
+    const modal = document.getElementById("eventModal");
+    const form = document.getElementById("eventForm");
+    const titleEl = document.getElementById("eventModalTitle");
+
+    form.reset();
+
+    if (index >= 0) {
+        // Edit Mode
+        titleEl.innerText = "Edit Schedule Event";
+        document.getElementById("eventEditIndex").value = index;
+        document.getElementById("eventName").value = scheduleEvents[index].name;
+        document.getElementById("eventDate").value = scheduleEvents[index].date;
+    } else {
+        // Create Mode
+        titleEl.innerText = "Add Timeline Event";
+        document.getElementById("eventEditIndex").value = "";
+    }
+
+    openModal("eventModal");
+}
+
+function handleEventSubmit(e) {
+    e.preventDefault();
+    const indexVal = document.getElementById("eventEditIndex").value;
+    const name = document.getElementById("eventName").value.trim();
+    const date = document.getElementById("eventDate").value.trim();
+
+    if (indexVal !== "") {
+        const idx = parseInt(indexVal);
+        scheduleEvents[idx] = { name, date };
+        logActivity(`Schedule event updated: ${name}`, "Schedule", "success");
+    } else {
+        scheduleEvents.push({ name, date });
+        logActivity(`New schedule event added: ${name}`, "Schedule", "success");
+    }
+
+    closeModal("eventModal");
+    renderSchedule();
+    updateStats();
+}
+
+function deleteEvent(idx) {
+    if (confirm(`Are you sure you want to delete event "${scheduleEvents[idx].name}"?`)) {
+        const name = scheduleEvents[idx].name;
+        scheduleEvents.splice(idx, 1);
+        logActivity(`Schedule event deleted: ${name}`, "Schedule", "danger");
+        renderSchedule();
+        updateStats();
+    }
+}
+
+// --- Registration Approval Operations ---
+function approveRegistration(idx) {
+    const name = registrations[idx].name;
+    registrations[idx].status = "Approved";
+    logActivity(`Registration approved for ${name}. Status badge updated.`, "Registrations", "success");
+    renderRegistrations();
+    updateStats();
+}
+
+function rejectRegistration(idx) {
+    if (confirm(`Are you sure you want to REJECT the registration of "${registrations[idx].name}"?`)) {
+        const name = registrations[idx].name;
+        registrations[idx].status = "Rejected";
+        logActivity(`Registration rejected for ${name}. Payment status marked void.`, "Registrations", "danger");
+        renderRegistrations();
+        updateStats();
+    }
+}
+
+// --- Announcements CRUD ---
+function handleAnnouncementSubmit(e) {
+    e.preventDefault();
+    const text = document.getElementById("announcementText").value.trim();
+
+    if (text === "") return;
+
+    announcements.unshift({
+        text: text,
+        time: new Date().toISOString(),
+        author: "Admin Coordinator"
     });
 
-    // Modal Close Button handlers
-    document.querySelectorAll(".btn-close-modal, .btn-cancel").forEach(btn => {
-        btn.addEventListener("click", () => {
-            closeModal("speakerModal");
-            closeModal("deleteConfirmModal");
-            closeModal("previewModal");
-        });
-    });
+    logActivity("New announcement published to public board.", "Announcements", "info");
+    document.getElementById("announcementText").value = "";
+    renderAnnouncements();
+}
 
-    // Initialize Activity Timeline
-    updateActivityPanel();
+function deleteAnnouncement(idx) {
+    if (confirm("Are you sure you want to delete this announcement? It will be removed from the feed.")) {
+        announcements.splice(idx, 1);
+        logActivity("Announcement removed from the public board.", "Announcements", "danger");
+        renderAnnouncements();
+    }
 }

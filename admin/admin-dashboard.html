@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISTA 2027 Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Navbar -->
+    <header class="admin-navbar">
+        <div class="nav-left">
+            <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle Navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo-wrapper">
+                <img src="img/clg logo.png" alt="Bharti Vidyapeeth Logo" class="nav-logo" onerror="this.style.display='none'">
+                <div class="logo-text-stack">
+                    <span class="logo-title">VISTA 2027</span>
+                    <span class="logo-subtitle">Admin Portal</span>
+                </div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="admin-profile">
+                <div class="avatar-wrapper">
+                    <div class="avatar-glow"></div>
+                    <i class="fas fa-user-shield avatar-icon"></i>
+                </div>
+                <div class="profile-details">
+                    <span class="profile-name">Admin Coordinator</span>
+                    <span class="profile-role">Super Admin</span>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item active" data-tab="overview">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Dashboard Overview</span>
+                    </li>
+                    <li class="nav-item" data-tab="speakers">
+                        <i class="fas fa-microphone-lines"></i>
+                        <span>Manage Speakers</span>
+                    </li>
+                    <li class="nav-item" data-tab="committee">
+                        <i class="fas fa-users-gear"></i>
+                        <span>Manage Committees</span>
+                    </li>
+                    <li class="nav-item" data-tab="schedule">
+                        <i class="fas fa-calendar-days"></i>
+                        <span>Manage Schedule</span>
+                    </li>
+                    <li class="nav-item" data-tab="registrations">
+                        <i class="fas fa-id-card-clip"></i>
+                        <span>Registrations</span>
+                    </li>
+                    <li class="nav-item" data-tab="announcements">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Announcements</span>
+                    </li>
+                    <li class="nav-item" data-tab="logs">
+                        <i class="fas fa-clock-rotate-left"></i>
+                        <span>Activity Logs</span>
+                    </li>
+                    <li class="nav-item" data-tab="settings">
+                        <i class="fas fa-sliders"></i>
+                        <span>Settings</span>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <span class="version-tag">V1.2.0 - Stable</span>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Viewport -->
+        <main class="main-viewport" id="mainViewport">
+            
+            <!-- SECTION 1: OVERVIEW -->
+            <section class="tab-panel active" id="overview-panel">
+                <div class="panel-header">
+                    <h2>Dashboard Overview</h2>
+                    <p class="panel-subtitle">Real-time metrics and summaries for VISTA 2027 Conference</p>
+                </div>
+
+                <!-- Stats Cards Grid -->
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <div class="stats-icon-wrapper blue">
+                            <i class="fas fa-microphone-lines"></i>
+                        </div>
+                        <div class="stats-info">
+                            <span class="stats-label">Total Speakers</span>
+                            <h3 class="stats-value" id="stat-speakers">0</h3>
+                        </div>
+                        <div class="stats-trend positive"><i class="fas fa-arrow-up"></i> Live Count</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon-wrapper orange">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stats-info">
+                            <span class="stats-label">Total Registrations</span>
+                            <h3 class="stats-value" id="stat-registrations">0</h3>
+                        </div>
+                        <div class="stats-trend positive"><i class="fas fa-arrow-up"></i> Live Count</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon-wrapper purple">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stats-info">
+                            <span class="stats-label">Total Events</span>
+                            <h3 class="stats-value" id="stat-events">0</h3>
+                        </div>
+                        <div class="stats-trend positive"><i class="fas fa-arrow-up"></i> Live Count</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-icon-wrapper gold">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stats-info">
+                            <span class="stats-label">Pending Approvals</span>
+                            <h3 class="stats-value" id="stat-pending">0</h3>
+                        </div>
+                        <div class="stats-trend info">Needs Review</div>
+                    </div>
+                </div>
+
+                <!-- Overview Charts / Summary Lists Grid -->
+                <div class="overview-details-grid">
+                    <div class="details-card glass-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bullhorn text-gold"></i> Latest Announcements</h3>
+                            <button class="card-action-btn" onclick="switchTab('announcements')">View All</button>
+                        </div>
+                        <div class="announcements-mini-list" id="announcements-mini-list">
+                            <!-- Dynamically loaded -->
+                        </div>
+                    </div>
+                    
+                    <div class="details-card glass-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-clock-rotate-left text-gold"></i> Recent Activity Logs</h3>
+                            <button class="card-action-btn" onclick="switchTab('logs')">View All</button>
+                        </div>
+                        <div class="logs-mini-list" id="logs-mini-list">
+                            <!-- Dynamically loaded -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: MANAGE SPEAKERS -->
+            <section class="tab-panel" id="speakers-panel">
+                <div class="panel-header flex-header">
+                    <div>
+                        <h2>Manage Keynote Speakers</h2>
+                        <p class="panel-subtitle">Add, edit, or remove speakers displayed on the public site</p>
+                    </div>
+                    <button class="action-btn-gold" id="addSpeakerBtn">
+                        <i class="fas fa-plus"></i> Add New Speaker
+                    </button>
+                </div>
+                <div class="speakers-grid-wrapper">
+                    <div class="speakers-admin-grid" id="speakersAdminGrid">
+                        <!-- Speaker cards injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: MANAGE COMMITTEES -->
+            <section class="tab-panel" id="committee-panel">
+                <div class="panel-header flex-header">
+                    <div>
+                        <h2>Manage Committee Members</h2>
+                        <p class="panel-subtitle">Edit members across Chief Patrons, Organizing Committee, and Advisory Board</p>
+                    </div>
+                    <button class="action-btn-gold" id="addCommitteeBtn">
+                        <i class="fas fa-user-plus"></i> Add Member
+                    </button>
+                </div>
+                <div class="committee-table-container glass-card">
+                    <div class="table-responsive">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Organization / Department</th>
+                                    <th>Section Category</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="committeeTableBody">
+                                <!-- Committee rows injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: MANAGE SCHEDULE -->
+            <section class="tab-panel" id="schedule-panel">
+                <div class="panel-header flex-header">
+                    <div>
+                        <h2>Manage Program Schedule</h2>
+                        <p class="panel-subtitle">Set up technical tracks, timeline events, and session timetables</p>
+                    </div>
+                    <button class="action-btn-gold" id="addEventBtn">
+                        <i class="fas fa-calendar-plus"></i> Add Event
+                    </button>
+                </div>
+                <div class="schedule-timeline-wrapper glass-card">
+                    <div class="timeline-admin-list" id="timelineAdminList">
+                        <!-- Timeline cards injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: REGISTRATIONS -->
+            <section class="tab-panel" id="registrations-panel">
+                <div class="panel-header">
+                    <h2>Registrations List</h2>
+                    <p class="panel-subtitle">Review, approve, or reject participant registrations and payments</p>
+                </div>
+                <div class="registrations-table-container glass-card">
+                    <div class="table-responsive">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Full Name</th>
+                                    <th>Email Address</th>
+                                    <th>Country</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Payment ID</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="registrationsTableBody">
+                                <!-- Registration rows injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: ANNOUNCEMENTS -->
+            <section class="tab-panel" id="announcements-panel">
+                <div class="panel-header">
+                    <h2>Announcements Board</h2>
+                    <p class="panel-subtitle">Create and manage alerts displayed on the public notice banner</p>
+                </div>
+                <div class="announcements-layout">
+                    <!-- Left: Create Announcement -->
+                    <div class="announcement-form-card glass-card">
+                        <h3><i class="fas fa-pen-to-square text-gold"></i> Post New Announcement</h3>
+                        <form class="custom-admin-form" id="announcementForm">
+                            <div class="form-group">
+                                <label for="announcementText">Announcement Message</label>
+                                <textarea id="announcementText" placeholder="Type announcement details..." rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="action-btn-gold width-100">
+                                <i class="fas fa-paper-plane"></i> Publish Alert
+                            </button>
+                        </form>
+                    </div>
+                    <!-- Right: Feed -->
+                    <div class="announcement-feed-card glass-card">
+                        <h3>Recent Announcements</h3>
+                        <div class="announcement-feed-list" id="announcementFeedList">
+                            <!-- Announcements feed injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: ACTIVITY LOGS -->
+            <section class="tab-panel" id="logs-panel">
+                <div class="panel-header flex-header">
+                    <div>
+                        <h2>System Activity Logs</h2>
+                        <p class="panel-subtitle">View audit logs of administrative changes made during the session</p>
+                    </div>
+                    <button class="action-btn-outline" id="clearLogsBtn">
+                        <i class="fas fa-trash-can"></i> Clear logs
+                    </button>
+                </div>
+                <div class="logs-table-container glass-card">
+                    <div class="table-responsive">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Category</th>
+                                    <th>User Action Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <!-- Logs injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: SETTINGS -->
+            <section class="tab-panel" id="settings-panel">
+                <div class="panel-header">
+                    <h2>Portal Settings</h2>
+                    <p class="panel-subtitle">Configure administrative preferences and conference configurations</p>
+                </div>
+                <div class="settings-layout-grid">
+                    <div class="settings-card glass-card">
+                        <h3><i class="fas fa-user-gear text-gold"></i> Profile Configuration</h3>
+                        <div class="settings-fields">
+                            <div class="form-group">
+                                <label>Administrator Name</label>
+                                <input type="text" value="Admin Coordinator" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" value="coordinator@vista2027.edu.in" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Role Type</label>
+                                <input type="text" value="Super Administrator" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card glass-card">
+                        <h3><i class="fas fa-sliders text-gold"></i> Preferences</h3>
+                        <div class="preference-toggle-item">
+                            <div class="toggle-details">
+                                <span class="toggle-title">System Activity Email Alerts</span>
+                                <span class="toggle-desc">Receive instant emails on registration arrivals</span>
+                            </div>
+                            <label class="switch-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <hr class="settings-divider">
+                        <div class="preference-toggle-item">
+                            <div class="toggle-details">
+                                <span class="toggle-title">Public Submissions Portal</span>
+                                <span class="toggle-desc">Toggle the paper submission link on the public site</span>
+                            </div>
+                            <label class="switch-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <hr class="settings-divider">
+                        <div class="preference-toggle-item">
+                            <div class="toggle-details">
+                                <span class="toggle-title">Dark Mode Theme Force</span>
+                                <span class="toggle-desc">Keep dashboard dark theme locked globally</span>
+                            </div>
+                            <label class="switch-toggle">
+                                <input type="checkbox" checked disabled>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- 1. Speaker Modal -->
+    <div class="admin-modal-overlay" id="speakerModal">
+        <div class="admin-modal-card glass-card">
+            <div class="modal-header">
+                <h3 id="speakerModalTitle">Add New Speaker</h3>
+                <button class="close-modal-btn" onclick="closeModal('speakerModal')">&times;</button>
+            </div>
+            <form class="custom-admin-form" id="speakerForm">
+                <input type="hidden" id="speakerEditIndex">
+                <div class="form-group">
+                    <label for="speakerName">Speaker Name</label>
+                    <input type="text" id="speakerName" required placeholder="Dr. John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="speakerTitle">Speaker Role / Title</label>
+                    <input type="text" id="speakerTitle" required placeholder="Professor, MIT Science Dept">
+                </div>
+                <div class="form-group">
+                    <label for="speakerPhoto">Photo URL (Optional)</label>
+                    <input type="text" id="speakerPhoto" placeholder="https://example.com/avatar.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="speakerBio">Professional Biography</label>
+                    <textarea id="speakerBio" rows="4" required placeholder="Brief biography details..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="action-btn-outline" onclick="closeModal('speakerModal')">Cancel</button>
+                    <button type="submit" class="action-btn-gold">Save Speaker</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Committee Modal -->
+    <div class="admin-modal-overlay" id="committeeModal">
+        <div class="admin-modal-card glass-card">
+            <div class="modal-header">
+                <h3 id="committeeModalTitle">Add Committee Member</h3>
+                <button class="close-modal-btn" onclick="closeModal('committeeModal')">&times;</button>
+            </div>
+            <form class="custom-admin-form" id="committeeForm">
+                <input type="hidden" id="committeeEditIndex">
+                <div class="form-group">
+                    <label for="committeeName">Member Name</label>
+                    <input type="text" id="committeeName" required placeholder="Dr. Patangrao Kadam">
+                </div>
+                <div class="form-group">
+                    <label for="committeeRole">Member Role / Designation</label>
+                    <input type="text" id="committeeRole" required placeholder="Founder Chancellor / General Chair">
+                </div>
+                <div class="form-group">
+                    <label for="committeeOrg">Organization / Department</label>
+                    <input type="text" id="committeeOrg" required placeholder="Bharati Vidyapeeth, College of Engineering, Pune">
+                </div>
+                <div class="form-group">
+                    <label for="committeeCategory">Section Category</label>
+                    <select id="committeeCategory" required>
+                        <option value="Chief Patron">Chief Patrons & Inspiration</option>
+                        <option value="Organizing Committee">Organizing Committee</option>
+                        <option value="Advisory Board">Advisory Board</option>
+                        <option value="Technical Advisor">Technical Program Advisor</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="action-btn-outline" onclick="closeModal('committeeModal')">Cancel</button>
+                    <button type="submit" class="action-btn-gold">Save Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Event Modal -->
+    <div class="admin-modal-overlay" id="eventModal">
+        <div class="admin-modal-card glass-card">
+            <div class="modal-header">
+                <h3 id="eventModalTitle">Add Event</h3>
+                <button class="close-modal-btn" onclick="closeModal('eventModal')">&times;</button>
+            </div>
+            <form class="custom-admin-form" id="eventForm">
+                <input type="hidden" id="eventEditIndex">
+                <div class="form-group">
+                    <label for="eventName">Event Description / Session Name</label>
+                    <input type="text" id="eventName" required placeholder="Paper Submission Deadline / Inaugaration Session">
+                </div>
+                <div class="form-group">
+                    <label for="eventDate">Date / Deadline Text</label>
+                    <input type="text" id="eventDate" required placeholder="20th March, 2027">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="action-btn-outline" onclick="closeModal('eventModal')">Cancel</button>
+                    <button type="submit" class="action-btn-gold">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script File -->
+    <script src="admin.js"></script>
+</body>
+</html>
