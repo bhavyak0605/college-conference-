@@ -1,15 +1,12 @@
 
 import { auth } from "./firebase-config.js";
-<<<<<<< HEAD
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-=======
 import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
->>>>>>> ffcea25 (udt)
 
 // --- Firebase Authentication Guard (Session Persistence & Protection) ---
 onAuthStateChanged(auth, (user) => {
