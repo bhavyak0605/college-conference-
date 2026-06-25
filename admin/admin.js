@@ -221,27 +221,26 @@ function initLoginPage(loginForm) {
             errorBox.classList.remove("show");
         }
 
-<<<<<<< HEAD
         setTimeout(async () => {
-        try {
-        await signInWithEmailAndPassword(auth, email, password);
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
 
-        window.location.href = "admin-dashboard.html";
+                window.location.href = "admin-dashboard.html";
 
-    } catch (error) {
-        if (loginBtn) {
-            loginBtn.classList.remove("loading");
-            loginBtn.disabled = false;
-        }
+            } catch (error) {
+                if (loginBtn) {
+                    loginBtn.classList.remove("loading");
+                    loginBtn.disabled = false;
+                }
 
-        if (errorBox && errorText) {
-            errorText.innerText = "Invalid email or password";
-            errorBox.classList.add("show");
-        }
+                if (errorBox && errorText) {
+                    errorText.innerText = "Invalid email or password";
+                    errorBox.classList.add("show");
+                }
 
-        console.log(error.message);
-    }
-}, 1200); // Simulated secure authentication delay
+                console.log(error.message);
+            }
+        }, 1200); // Simulated secure authentication delay
 =======
         // Real Firebase Authentication
         signInWithEmailAndPassword(auth, email, password)
@@ -266,7 +265,6 @@ function initLoginPage(loginForm) {
                     errorBox.classList.add("show");
                 }
             });
->>>>>>> ffcea25 (udt)
     });
 }
 
