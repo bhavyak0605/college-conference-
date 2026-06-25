@@ -24,26 +24,7 @@ onAuthStateChanged(auth, (user) => {
 
 // 1. DATA STORE (Stateful mock database)
 
-let speakers = [
-    {
-        name: "Dr. Ramesh K. Somashekar",
-        title: "Professor, IISc Bangalore",
-        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
-        bio: "Dr. Ramesh Somashekar is a leading academician at IISc, specializing in Artificial Intelligence for clinical healthcare. He has authored over 80+ peer-reviewed journal papers and serves on the advisory boards of major biomedical research councils."
-    },
-    {
-        name: "Dr. Arlene Peterson",
-        title: "Senior AI Scientist, OpenAI",
-        photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200",
-        bio: "Dr. Peterson works in San Francisco focusing on scaling laws for Large Multimodal Models (LMMs). Prior to OpenAI, she received her PhD from Stanford University and worked on foundational NLP systems."
-    },
-    {
-        name: "Prof. Hiroshi Tanaka",
-        title: "Director of Robotics, Tokyo Tech",
-        photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200",
-        bio: "Professor Tanaka leads the Autonomous Systems Lab at Tokyo Institute of Technology. His research includes tactile sensing, cobotics, and smart city robotic automation frameworks for heavy industries."
-    }
-];
+let speakers = [];
 
 let committee = [
     {
@@ -93,44 +74,7 @@ let scheduleEvents = [
     { name: "Valedictory Ceremony & Best Paper Awards", date: "17th July, 2027" }
 ];
 
-let registrations = [
-    {
-        name: "Bhavya Kadam",
-        email: "bhavya.kadam@example.com",
-        country: "India",
-        category: "Academician",
-        amount: "₹5,000",
-        txnId: "TXN9081234",
-        status: "Approved"
-    },
-    {
-        name: "Dr. Sarah Jenkins",
-        email: "s.jenkins@example.com",
-        country: "United States",
-        category: "Academician",
-        amount: "₹8,500",
-        txnId: "TXN9081546",
-        status: "Pending"
-    },
-    {
-        name: "Aditya Sharma",
-        email: "aditya.sharma@example.com",
-        country: "India",
-        category: "Student",
-        amount: "₹3,000",
-        txnId: "TXN9081890",
-        status: "Approved"
-    },
-    {
-        name: "Prof. Kenji Sato",
-        email: "k.sato@example.com",
-        country: "Japan",
-        category: "Industry Professional",
-        amount: "₹10,000",
-        txnId: "TXN9081999",
-        status: "Rejected"
-    }
-];
+let registrations = [];
 
 let announcements = [
     {
