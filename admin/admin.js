@@ -1,9 +1,3 @@
-/* 
-================================================================
-VISTA 2027 Admin Console Core JavaScript (Firebase Module)
-Aligned to the main VISTA 2027 Academic Conference Website Theme.
-================================================================
-*/
 
 import { auth } from "./firebase-config.js";
 <<<<<<< HEAD
@@ -35,9 +29,7 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// ==========================================
 // 1. DATA STORE (Stateful mock database)
-// ==========================================
 
 let speakers = [
     {
@@ -175,9 +167,7 @@ let activityLogs = [
     }
 ];
 
-// ==========================================
 // 2. DOM INITIALIZATION
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
@@ -221,7 +211,6 @@ function initLoginPage(loginForm) {
             errorBox.classList.remove("show");
         }
 
-<<<<<<< HEAD
         setTimeout(async () => {
         try {
         await signInWithEmailAndPassword(auth, email, password);
@@ -242,7 +231,6 @@ function initLoginPage(loginForm) {
         console.log(error.message);
     }
 }, 1200); // Simulated secure authentication delay
-=======
         // Real Firebase Authentication
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
@@ -266,7 +254,6 @@ function initLoginPage(loginForm) {
                     errorBox.classList.add("show");
                 }
             });
->>>>>>> ffcea25 (udt)
     });
 }
 
@@ -388,9 +375,7 @@ function initDashboardPage() {
     }
 }
 
-// ==========================================
 // 3. SPA TAB ROUTING (Global Scope Binding)
-// ==========================================
 
 window.switchTab = function(tabName) {
     // Remove active class from all nav items
@@ -417,9 +402,7 @@ window.switchTab = function(tabName) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// ==========================================
 // 4. STATS METRICS SYNC
-// ==========================================
 
 function updateStats() {
     const sEl = document.getElementById("stat-speakers");
@@ -437,9 +420,7 @@ function updateStats() {
     }
 }
 
-// ==========================================
 // 5. RENDERING PIPELINES
-// ==========================================
 
 // --- Keynote Speakers Render ---
 function renderSpeakers() {
@@ -687,9 +668,7 @@ function renderActivityLogs() {
     });
 }
 
-// ==========================================
 // 6. ACTION & CRUD OPERATIONS (Global Scope Binding)
-// ==========================================
 
 // --- Activity Logger Helper ---
 function logActivity(description, category, status = "success") {
