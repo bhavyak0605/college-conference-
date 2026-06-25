@@ -104,7 +104,9 @@ let activityLogs = [
     }
 ];
 
+// ==========================================
 // 2. DOM INITIALIZATION
+// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("mainViewport") !== null) {
@@ -230,7 +232,9 @@ function initDashboardPage() {
     }
 }
 
+// ==========================================
 // 3. SPA TAB ROUTING
+// ==========================================
 
 function switchTab(tabName) {
     // Remove active class from all nav items
@@ -257,7 +261,9 @@ function switchTab(tabName) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// ==========================================
 // 4. STATS METRICS SYNC
+// ==========================================
 
 function updateStats() {
     const sEl = document.getElementById("stat-speakers");
@@ -275,7 +281,9 @@ function updateStats() {
     }
 }
 
+// ==========================================
 // 5. RENDERING PIPELINES
+// ==========================================
 
 // --- Keynote Speakers Render ---
 function renderSpeakers() {
@@ -523,7 +531,9 @@ function renderActivityLogs() {
     });
 }
 
+// ==========================================
 // 6. ACTION & CRUD OPERATIONS
+// ==========================================
 
 // --- Activity Logger Helper ---
 function logActivity(description, category, status = "success") {
