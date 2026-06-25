@@ -1,21 +1,12 @@
-/* 
-================================================================
-VISTA 2027 Admin Console Core JavaScript (Firebase Module)
-Aligned to the main VISTA 2027 Academic Conference Website Theme.
-================================================================
-*/
 
 import { auth } from "./firebase-config.js";
-<<<<<<< HEAD
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-=======
 import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
->>>>>>> ffcea25 (udt)
 
 // --- Firebase Authentication Guard (Session Persistence & Protection) ---
 onAuthStateChanged(auth, (user) => {
@@ -35,9 +26,7 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// ==========================================
 // 1. DATA STORE (Stateful mock database)
-// ==========================================
 
 let speakers = [
     {
@@ -175,9 +164,7 @@ let activityLogs = [
     }
 ];
 
-// ==========================================
 // 2. DOM INITIALIZATION
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
@@ -238,10 +225,16 @@ function initLoginPage(loginForm) {
                     errorBox.classList.add("show");
                 }
 
+<<<<<<< HEAD
                 console.log(error.message);
             }
         }, 1200); // Simulated secure authentication delay
 =======
+=======
+        console.log(error.message);
+    }
+}, 1200); // Simulated secure authentication delay
+>>>>>>> eade63a9bf48b3dcc313108e8d9ca8106b6a1f35
         // Real Firebase Authentication
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
@@ -386,9 +379,7 @@ function initDashboardPage() {
     }
 }
 
-// ==========================================
 // 3. SPA TAB ROUTING (Global Scope Binding)
-// ==========================================
 
 window.switchTab = function(tabName) {
     // Remove active class from all nav items
@@ -415,9 +406,7 @@ window.switchTab = function(tabName) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-// ==========================================
 // 4. STATS METRICS SYNC
-// ==========================================
 
 function updateStats() {
     const sEl = document.getElementById("stat-speakers");
@@ -435,9 +424,7 @@ function updateStats() {
     }
 }
 
-// ==========================================
 // 5. RENDERING PIPELINES
-// ==========================================
 
 // --- Keynote Speakers Render ---
 function renderSpeakers() {
@@ -685,9 +672,7 @@ function renderActivityLogs() {
     });
 }
 
-// ==========================================
 // 6. ACTION & CRUD OPERATIONS (Global Scope Binding)
-// ==========================================
 
 // --- Activity Logger Helper ---
 function logActivity(description, category, status = "success") {
