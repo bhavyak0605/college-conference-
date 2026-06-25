@@ -1,33 +1,43 @@
+/* 
+================================================================
+VISTA 2027 Admin Console Core JavaScript (Firebase Module)
+Aligned to the main VISTA 2027 Academic Conference Website Theme.
+================================================================
+*/
+
 import { auth } from "./firebase-config.js";
+<<<<<<< HEAD
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+=======
+import {
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+>>>>>>> ffcea25 (udt)
 
+// --- Firebase Authentication Guard (Session Persistence & Protection) ---
 onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        window.location.href = "admin-login.html";
-    }
-});
-
-import { signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-logoutBtn.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "admin-login.html";
-});
-
-(function() {
     const path = window.location.pathname;
     const isLoginPage = path.endsWith("login.html") || document.getElementById("loginForm") !== null;
-    const isLoggedIn = sessionStorage.getItem("adminLoggedIn") === "true";
 
-    if (!isLoginPage && !isLoggedIn) {
-        window.location.href = "login.html";
-    } else if (isLoginPage && isLoggedIn) {
-        window.location.href = "admin-dashboard.html";
+    if (user) {
+        // User is authenticated
+        if (isLoginPage) {
+            window.location.href = "admin-dashboard.html";
+        }
+    } else {
+        // User is not authenticated
+        if (!isLoginPage) {
+            window.location.href = "login.html";
+        }
     }
-})();
+});
 
+// ==========================================
 // 1. DATA STORE (Stateful mock database)
+// ==========================================
 
 let speakers = [
     {
@@ -165,7 +175,9 @@ let activityLogs = [
     }
 ];
 
+// ==========================================
 // 2. DOM INITIALIZATION
+// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
@@ -197,7 +209,7 @@ function initLoginPage(loginForm) {
     }
 
     loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevents page reload
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
 
@@ -209,6 +221,7 @@ function initLoginPage(loginForm) {
             errorBox.classList.remove("show");
         }
 
+<<<<<<< HEAD
         setTimeout(async () => {
         try {
         await signInWithEmailAndPassword(auth, email, password);
@@ -229,6 +242,31 @@ function initLoginPage(loginForm) {
         console.log(error.message);
     }
 }, 1200); // Simulated secure authentication delay
+=======
+        // Real Firebase Authentication
+        signInWithEmailAndPassword(auth, email, password)
+            .then(() => {
+                // Redirection is handled automatically by onAuthStateChanged
+            })
+            .catch((error) => {
+                if (loginBtn) {
+                    loginBtn.classList.remove("loading");
+                    loginBtn.disabled = false;
+                }
+                if (errorBox && errorText) {
+                    let friendlyMessage = "Invalid credentials. Please try again.";
+                    if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
+                        friendlyMessage = "Incorrect email or password. Please try again.";
+                    } else if (error.code === "auth/invalid-email") {
+                        friendlyMessage = "Please enter a valid email address.";
+                    } else if (error.code === "auth/user-disabled") {
+                        friendlyMessage = "This administrator account has been disabled.";
+                    }
+                    errorText.innerText = friendlyMessage;
+                    errorBox.classList.add("show");
+                }
+            });
+>>>>>>> ffcea25 (udt)
     });
 }
 
@@ -279,14 +317,20 @@ function initDashboardPage() {
         }
     });
 
-    // Logout Button Trigger
+    // Logout Button Trigger (Firebase signOut)
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
             logActivity("Logout trigger initialized.", "System", "warning");
-            sessionStorage.removeItem("adminLoggedIn");
-            alert("You have successfully logged out of the VISTA 2027 Mock Portal.");
-            window.location.href = "login.html";
+            signOut(auth)
+                .then(() => {
+                    // Redirect is handled by onAuthStateChanged, but forced here as a fallback
+                    window.location.href = "login.html";
+                })
+                .catch((err) => {
+                    console.error("Firebase SignOut Error:", err);
+                    alert("Error logging out. Please refresh and try again.");
+                });
         });
     }
 
@@ -344,7 +388,9 @@ function initDashboardPage() {
     }
 }
 
-// 3. SPA TAB ROUTING (Global Scope)
+// ==========================================
+// 3. SPA TAB ROUTING (Global Scope Binding)
+// ==========================================
 
 window.switchTab = function(tabName) {
     // Remove active class from all nav items
@@ -371,7 +417,9 @@ window.switchTab = function(tabName) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
+// ==========================================
 // 4. STATS METRICS SYNC
+// ==========================================
 
 function updateStats() {
     const sEl = document.getElementById("stat-speakers");
@@ -389,7 +437,9 @@ function updateStats() {
     }
 }
 
+// ==========================================
 // 5. RENDERING PIPELINES
+// ==========================================
 
 // --- Keynote Speakers Render ---
 function renderSpeakers() {
@@ -637,7 +687,9 @@ function renderActivityLogs() {
     });
 }
 
-// 6. ACTION & CRUD OPERATIONS (Global Scope)
+// ==========================================
+// 6. ACTION & CRUD OPERATIONS (Global Scope Binding)
+// ==========================================
 
 // --- Activity Logger Helper ---
 function logActivity(description, category, status = "success") {
