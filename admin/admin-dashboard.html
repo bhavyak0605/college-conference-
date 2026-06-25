@@ -84,6 +84,10 @@
                         <i class="fas fa-sliders"></i>
                         <span>Settings</span>
                     </li>
+                    <li class="nav-item" data-tab="hero">
+                        <i class="fas fa-desktop"></i>
+                        <span>Edit Hero Section</span>
+                    </li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -387,10 +391,35 @@
                     </div>
                 </div>
             </section>
+
+            <section class="tab-panel" id="hero-panel">
+                <div class="panel-header">
+                    <h2>✏️ Edit Hero / Conference Info</h2>
+                    <p class="panel-subtitle">Manage the conference branding, dates, venue, and announcement banner on the public home page</p>
+                </div>
+                
+                <div class="editor-section">
+                    <label>Conference Name</label>
+                    <input type="text" id="confName" placeholder="VISTA 2027"/>
+
+                    <label>Dates</label>
+                    <input type="text" id="confDates" placeholder="24th-25th June 2027"/>
+
+                    <label>Venue</label>
+                    <input type="text" id="confVenue" placeholder="College name..."/>
+
+                    <label>Edition & Mode (subtitle)</label>
+                    <textarea id="confSubtitle" rows="3"></textarea>
+
+                    <label>Announcement Banner</label>
+                    <input type="text" id="confAnnouncement" placeholder="Registrations are open..."/>
+
+                    <button id="saveHeroBtn">💾 Save Changes</button>
+                    <p id="heroSaveStatus"></p>
+                </div>
+            </section>
         </main>
     </div>
-
-    <!-- ================= MODALS ================= -->
 
     <!-- 1. Speaker Modal -->
     <div class="admin-modal-overlay" id="speakerModal">

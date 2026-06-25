@@ -1,15 +1,12 @@
-/* 
-================================================================
-VISTA 2027 Admin Console - Dashboard Controller (Firebase Module)
-Aligned to the main VISTA 2027 Academic Conference Website Theme.
-================================================================
-*/
 
 import { auth } from "./firebase-config.js";
 import {
     signOut,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { getFirestore, doc, getDoc, setDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 console.log("admin-dashboard.js (Dashboard controller) loaded.");
 
@@ -25,9 +22,7 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// ==========================================
 // 1. DATA STORE (Stateful mock database)
-// ==========================================
 
 let speakers = [
     {
@@ -826,9 +821,39 @@ function deleteAnnouncement(idx) {
     }
 }
 
-// ==========================================
+//hero section
+
+const db = getFirestore();
+
+// Load existing values into form
+async function loadHeroEditor() {
+    const snap = await getDoc(doc(db, "content", "hero"));
+    if (snap.exists()) {
+        const d = snap.data();
+        document.getElementById("confName").value        = d.confName || "";
+        document.getElementById("confDates").value       = d.dates || "";
+        document.getElementById("confVenue").value       = d.venue || "";
+        document.getElementById("confSubtitle").value    = d.subtitleDesc || "";
+        document.getElementById("confAnnouncement").value = d.announcement || "";
+    }
+}
+
+// Save button
+document.getElementById("saveHeroBtn").addEventListener("click", async () => {
+    await setDoc(doc(db, "content", "hero"), {
+        confName:    document.getElementById("confName").value,
+        dates:       document.getElementById("confDates").value,
+        venue:       document.getElementById("confVenue").value,
+        subtitleDesc: document.getElementById("confSubtitle").value,
+        announcement: document.getElementById("confAnnouncement").value,
+    });
+    document.getElementById("heroSaveStatus").textContent = "✅ Saved successfully!";
+    setTimeout(() => document.getElementById("heroSaveStatus").textContent = "", 3000);
+});
+
+loadHeroEditor();
+
 // 7. GLOBAL SCOPE BINDING FOR INLINE HTML EVENT HANDLERS
-// ==========================================
 
 window.switchTab = switchTab;
 window.openModal = openModal;
