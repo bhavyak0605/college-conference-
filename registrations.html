@@ -107,25 +107,33 @@
                         <thead>
                             <tr>
                                 <th>Category</th>
-                                <th>Online</th>
-                                <th>Offline</th>
+                                <th>Fees</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Students/Research Scholars</td>
-                                <td>INR 15000</td>
-                                <td>INR 21,500</td>
+                                <td>Full time IEEE students</td>
+                                <td>INR 7,000</td>
+                            </tr>
+                            <tr>
+                                <td>Non IEEE student</td>
+                                <td>INR 6,000</td>
+                            </tr>
+                            <tr>
+                                <td>Teachers and Scholars IEEE</td>
+                                <td>INR 7,000</td>
+                            </tr>
+                            <tr>
+                                <td>Teachers and Scholars Non IEEE</td>
+                                <td>INR 8,000</td>
                             </tr>
                             <tr>
                                 <td>Faculty from Academia /Delegates from Industry</td>
-                                <td>INR 18000</td>
-                                <td>INR 22,500</td>
+                                <td>INR 18,000</td>
                             </tr>
                             <tr>
                                 <td>Attendee</td>
-                                <td>nil</td>
-                                <td>INR 9000</td>
+                                <td>INR 9,000</td>
                             </tr>
                         </tbody>
                     </table>
@@ -152,8 +160,8 @@
                             <p class="currency-note">(Must be Paid in USD)</p>
                         </div>
                         <div class="action-buttons">
-                            <button class="pay-btn btn-paypal">Pay with <img src="img/paypal-logo.png" alt="PayPal"
-                                    onerror="this.src=''; this.alt='PayPal'; this.style.fontWeight='bold'; this.style.fontStyle='italic'"></button>
+                            <!-- <button class="pay-btn btn-paypal">Pay with <img src="img/paypal-logo.png" alt="PayPal"
+                                    onerror="this.src=''; this.alt='PayPal'; this.style.fontWeight='bold'; this.style.fontStyle='italic'"></button> -->
                             <button class="form-btn"
                                 onclick="document.getElementById('registrationFormSection').scrollIntoView({behavior: 'smooth'})">Fill
                                 Registration Form</button>
@@ -166,24 +174,20 @@
                             <thead>
                                 <tr>
                                     <th>Delegates</th>
-                                    <th>Online</th>
-                                    <th>Offline</th>
+                                    <th>Fees</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>Students/Research Scholars</td>
                                     <td>USD 200</td>
-                                    <td>USD 275</td>
                                 </tr>
                                 <tr>
                                     <td>Faculty from Academia /Delegates from Industry</td>
                                     <td>USD 225</td>
-                                    <td>USD 300</td>
                                 </tr>
                                 <tr>
                                     <td>Attendee</td>
-                                    <td>nil</td>
                                     <td>USD 150</td>
                                 </tr>
                             </tbody>
@@ -262,9 +266,12 @@
                     <div class="form-row">
                         <div class="form-group half-width">
                             <label for="regCategory">Category *</label>
-                            <select id="regCategory" name="category" required>
+                             <select id="regCategory" name="category" required>
                                 <option value="">Select Category</option>
-                                <option value="Student/Research Scholar">Student/Research Scholar</option>
+                                <option value="Full time IEEE students">Full time IEEE students</option>
+                                <option value="Non IEEE student">Non IEEE student</option>
+                                <option value="Teachers and Scholars IEEE">Teachers and Scholars IEEE</option>
+                                <option value="Teachers and Scholars Non IEEE">Teachers and Scholars Non IEEE</option>
                                 <option value="Faculty/Industry Delegate">Faculty/Industry Delegate</option>
                                 <option value="Attendee">Attendee</option>
                             </select>
