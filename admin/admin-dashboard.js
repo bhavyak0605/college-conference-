@@ -78,7 +78,7 @@ let registrations = [];
 
 let announcements = [
     {
-        text: "Welcome to the VISTA 2027 Admin Portal! You can add, edit, and delete speakers, committee members, and timeline events in real-time.",
+        text: "Welcome to the BVUVISTA 2027 Admin Portal! You can add, edit, and delete speakers, committee members, and timeline events in real-time.",
         time: "2026-06-25T00:01:00.000Z",
         author: "System Administrator"
     },
