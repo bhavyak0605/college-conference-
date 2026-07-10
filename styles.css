@@ -316,7 +316,8 @@ a {
 /* Hero Section */
 .hero {
     position: relative;
-    min-height: 500px;
+    min-height: 72vh;
+    min-height: 710px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -324,49 +325,46 @@ a {
 }
 
 .hero-slider {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
+     position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }
 
 .hero-slide {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    transform: translateX(100%);
-    opacity: 1;
-    z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
 }
 
 .hero-slide.active {
-    transform: translateX(0);
-    transition: transform 1s ease-in-out;
-    z-index: 2;
+    opacity: 1;
 }
 
-.hero-slide.exit {
+/* .hero-slide.exit {
     transform: translateX(-100%);
     transition: transform 1s ease-in-out;
     z-index: 1;
-}
+} */
 
-.hero-slide::before {
+.hero-slide::after {
     content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
-    z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  /* Dark black overlay for contrast */
+  z-index: 1;
 }
 
 .hero-content {
@@ -375,7 +373,7 @@ a {
     text-align: center;
     color: var(--white);
     max-width: 900px;
-    padding: 40px 20px;
+    padding: 60px 20px 90px;
 }
 
 .hero-title {
@@ -462,50 +460,70 @@ a {
     display: inline-block;
 }
 
-/* Notifications Section */
-.notifications {
-    background: var(--white);
-    padding: 40px 0;
-}
-
-.notification-box {
-    background: var(--grey-light);
-    border: 1px solid var(--grey-medium);
-    border-radius: 5px;
-    padding: 25px 60px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
+/* Countdown Section */
+.countdown-section {
+    background: transparent;
+    padding: 0;
+    margin-top: -58px;
+    margin-bottom: 24px;
     position: relative;
-    max-width: 1000px;
+    z-index: 20;
+}
+
+.countdown-box {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #4a5568;
+    border-radius: 10px;
+    padding: 16px 28px 20px;
+    max-width: 520px;
     margin: 0 auto;
-}
-
-.carousel-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: var(--text-dark);
-    cursor: pointer;
-    padding: 5px 10px;
-    transition: color 0.3s ease;
-}
-
-.carousel-btn:hover {
-    color: var(--nav-purple);
-}
-
-.notification-content {
-    flex: 1;
     text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
-.notification-content p {
-    color: var(--text-dark);
-    font-size: 15px;
-    line-height: 1.6;
-    margin: 0;
-    font-weight: 500;
+.countdown-title {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--nav-purple);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.countdown-unit {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 12px 14px 10px;
+    min-width: 72px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.countdown-number {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: #4a7ab5;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.countdown-label {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: #4a4a6a;
+    text-transform: uppercase;
 }
 
 /* Welcome Message Section */
@@ -1582,6 +1600,41 @@ a {
         font-size: 14px;
     }
 
+    .hero {
+        min-height: 580px;
+    }
+
+    .hero-content {
+        padding: 50px 20px 80px;
+    }
+
+    .countdown-section {
+        margin-top: -48px;
+        margin-bottom: 18px;
+    }
+
+    .countdown-box {
+        padding: 14px 18px 18px;
+        max-width: 420px;
+    }
+
+    .countdown-timer {
+        gap: 10px;
+    }
+
+    .countdown-unit {
+        min-width: 62px;
+        padding: 10px 10px 8px;
+    }
+
+    .countdown-number {
+        font-size: 26px;
+    }
+
+    .countdown-label {
+        font-size: 8px;
+    }
+
     .section-title {
         font-size: 28px;
     }
@@ -1867,7 +1920,12 @@ a {
     }
 
     .hero {
-        min-height: 400px;
+        min-height: 55vh;
+        min-height: 480px;
+    }
+
+    .hero-content {
+        padding: 40px 20px 70px;
     }
 
     .hero-title {
@@ -1899,8 +1957,27 @@ a {
         font-size: 10px;
     }
 
-    .notification-box {
-        padding: 15px 30px;
+    .countdown-box {
+        padding: 12px 14px 16px;
+        max-width: 100%;
+    }
+
+    .countdown-timer {
+        gap: 8px;
+    }
+
+    .countdown-unit {
+        min-width: 0;
+        flex: 1;
+        padding: 10px 6px 8px;
+    }
+
+    .countdown-number {
+        font-size: 22px;
+    }
+
+    .countdown-label {
+        font-size: 7px;
     }
 
     .info-banner p {

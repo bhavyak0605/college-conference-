@@ -84,37 +84,41 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Notification Carousel
-    const notifications = [
-        "Paper Submission Deadline for Conference 2026 is now extended to 28 February. Please go to submission guidelines for more Information. Click Submit Paper for directly submitting your paper",
-        "Springer CCIS Registration is now closed, if a paper accepted for Springer CCIS and is registered after 10 February, will be automatically transferred to AIP. Only AIP regular registration is open from 11 February",
-        "Regular registrations for the conference are now open only for AIP from 11 February 2026 to the last date (to be announced)",
-        "Conference 2026 papers will be published in AIP Conference Proceedings and Springer CCIS – Scopus and WoS Indexed"
-    ];
+    // Countdown Timer — target: 29 July 2027, midnight IST
+    const countdownTarget = new Date('2027-07-29T00:00:00+05:30');
+    const countdownDays = document.getElementById('countdownDays');
+    const countdownHours = document.getElementById('countdownHours');
+    const countdownMins = document.getElementById('countdownMins');
+    const countdownSecs = document.getElementById('countdownSecs');
 
-    let currentNotification = 0;
-    const notificationText = document.getElementById('notificationText');
-    const prevBtn = document.getElementById('prevNotification');
-    const nextBtn = document.getElementById('nextNotification');
+    function updateCountdown() {
+        if (!countdownDays) return;
 
-    function updateNotification() {
-        if (notificationText) {
-            notificationText.textContent = notifications[currentNotification];
+        const now = new Date();
+        const diff = countdownTarget - now;
+
+        if (diff <= 0) {
+            countdownDays.textContent = '00';
+            countdownHours.textContent = '00';
+            countdownMins.textContent = '00';
+            countdownSecs.textContent = '00';
+            return;
         }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        countdownDays.textContent = String(days);
+        countdownHours.textContent = String(hours).padStart(2, '0');
+        countdownMins.textContent = String(mins).padStart(2, '0');
+        countdownSecs.textContent = String(secs).padStart(2, '0');
     }
 
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function () {
-            currentNotification = (currentNotification - 1 + notifications.length) % notifications.length;
-            updateNotification();
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function () {
-            currentNotification = (currentNotification + 1) % notifications.length;
-            updateNotification();
-        });
+    if (countdownDays) {
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
     }
 
     // Smooth scrolling for anchor links
